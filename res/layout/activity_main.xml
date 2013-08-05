@@ -9,14 +9,25 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
 	<TextView 
 	    android:id="@+id/txtBTIndicator"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:text="BT status label"
 	    />
+	<Button 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Discover Devices"
+	    android:onClick="onClick_Discover"/>
+	<Button 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Stop Discover"
+	    android:onClick="onClick_Undiscover"/>
+	<TextView
+	    android:layout_height="wrap_content"
+	    android:layout_width="wrap_content"
+	    android:id="@+id/txtDeviceOne" />
+
 </LinearLayout>
