@@ -1,14 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:gravity="center_vertical" >
 
-    <Button
-        android:id="@+id/StartWrite"
+    <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Test" 
-        android:onClick="onClick_StartWrite"/>
+        android:layout_centerInParent="true"
+        android:orientation="vertical" >
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/border"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:padding="10dp" >
+
+            <Button
+                android:id="@+id/StartWrite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:onClick="onClick_StartWrite"
+                android:padding="25dp"
+                android:text="Start Test" />
+
+            <Button
+                android:id="@+id/StopAndSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:onClick="onClick_StopAndSave"
+                android:padding="25dp"
+                android:text="Stop and Save" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:padding="10dp" >
+
+            <Button
+                android:id="@+id/RecordStep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:onClick="onClick_RecordStep"
+                android:padding="25dp"
+                android:text="Record Step" />
+
+            <Button
+                android:id="@+id/Undo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:onClick="onClick_Undo"
+                android:padding="25dp"
+                android:text="Undo Step" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

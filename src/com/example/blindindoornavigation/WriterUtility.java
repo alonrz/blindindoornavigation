@@ -33,8 +33,16 @@ public class WriterUtility {
 			FileWriter fw = new FileWriter(myFile.getAbsoluteFile());
 			BufferedWriter writer = new BufferedWriter(fw);  
 			
-			writer.write("hello from alon");
+			//write content to file
+			writer.write("first value");
 			
+			//Write time
+			writer.write(","+ time.format2445());
+			
+			//
+			
+			
+			writer.newLine();
 			writer.close();
 			
 			return n;
