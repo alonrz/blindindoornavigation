@@ -38,7 +38,8 @@
                 android:layout_margin="10dp"
                 android:onClick="onClick_StopAndSave"
                 android:padding="25dp"
-                android:text="Stop and Save" />
+                android:text="Stop and Save" 
+                android:enabled="false" />
         </LinearLayout>
 
         <LinearLayout
@@ -57,7 +58,8 @@
                 android:layout_margin="10dp"
                 android:onClick="onClick_RecordStep"
                 android:padding="25dp"
-                android:text="Record Step" />
+                android:text="Record Step 1" 
+                android:enabled="false" />
 
             <Button
                 android:id="@+id/Undo"
@@ -67,7 +69,8 @@
                 android:layout_margin="10dp"
                 android:onClick="onClick_Undo"
                 android:padding="25dp"
-                android:text="Undo Step" />
+                android:text="Undo Step"
+                android:enabled="false" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
