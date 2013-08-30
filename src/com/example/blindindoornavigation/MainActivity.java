@@ -105,4 +105,12 @@ public class MainActivity extends Activity {
     {
     	unregisterReceiver(mReceiver);
     }
+	
+	public void onClick_GoToTestActivity(View view)
+	{
+		Intent myIntent = new Intent(this, FieldTester.class);
+		this.startActivity(myIntent);
+		
+		
+	}
 }
