@@ -203,11 +203,12 @@ private class CalculateLocation extends Thread {
 		ArrayList<String> stringList = new ArrayList<String>();
 		stringList.add("90:00:4E:FE:34:E1"); //DLaptop
 		stringList.add("78:A3:E4:A8:7E:48"); //DPhone
-		stringList.add("3C:D0:F8:6B:16:32"); //Bphone 
+		//stringList.add("3C:D0:F8:6B:16:32"); //Bphone 
 		stringList.add("20:C9:D0:85:58:5A"); //Alap
 		stringList.add("D0:23:DB:24:81:46"); //APhone 
 		stringList.add("38:0A:94:A8:F8:76"); //Aandroid
-		stringList.add("90:00:4E:F8:70:79"); //BLaptop 
+		
+		//stringList.add("90:00:4E:F8:70:79"); //BLaptop 
 
 
 		adapter.cancelDiscovery();
@@ -218,7 +219,7 @@ private class CalculateLocation extends Thread {
 
 		//Wait 5 seconds for threads to all return (~5 seconds for time out, 2-4 for ACL connection return)
 		try {
-			Thread.sleep(5000);
+			Thread.sleep((stringList.size()+1) * 5000 );
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
