@@ -92,14 +92,12 @@ public class MainActivity extends Activity {
 	};
     
     
-	public void onClick_Discover(View view)
+	/*public void onClick_Discover(View view)
     {   	
 		CalculateLocation cl = new CalculateLocation();
 		cl.start();
     	
-		
-		//calculateLocation();
-    }
+    }*/
     
 	
     @Override
@@ -130,7 +128,7 @@ public class MainActivity extends Activity {
 		Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
 	}
 	
-	//////////////////////////////////////////////////////////////////////////////////////////
+	/*//////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////ACL Connection Thread Class///////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -282,7 +280,7 @@ public class MainActivity extends Activity {
 
 		}
 		
-	}
+	}*/
 	
 	
 }
