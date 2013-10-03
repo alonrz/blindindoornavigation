@@ -32,12 +32,16 @@ public class FieldTester extends Activity {
 	Hashtable<String, Short> rssiVal = new Hashtable<String, Short>();
 	Hashtable<String, String> deviceName = new Hashtable<String, String>();
 	Hashtable<Integer, String> colOrder= new Hashtable<Integer, String>(); //used for pilot test to keep certain beacons in column order
-
+	Hashtable<String, String> pointsOfInterest = new Hashtable<String, String>(); //This will most likely be pulled from a database, but currently its just hard coded
+	
+	BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+	Set<BluetoothDevice> beaconsInRange = new HashSet<BluetoothDevice>();
+	
 	boolean isUndoEnabled = false;
 	WriterUtility mWriter = new WriterUtility();
 	ProgressBar pb;
 	
-	int n = 0;//debug thingy
+	int n = 0;//debug
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -73,12 +77,17 @@ public class FieldTester extends Activity {
 	}
 
 	public void onClick_RecordStep(View view) throws IOException {
+	
+		beaconsInRange.clear();
+		rssiVal.clear();
+		adapter.cancelDiscovery();
 		
 		pb.setVisibility(ProgressBar.VISIBLE);
 		LinearLayout buttonsLayout = (LinearLayout) findViewById(R.id.linear_layout2);
 		buttonsLayout.setVisibility(View.INVISIBLE);
 		
-		startACL();
+		CalculateLocation cl = new CalculateLocation();
+		cl.start();//Starts the location finding algorithm
 		
 		if (isUndoEnabled == false) {
 			Button btnUndo = (Button) findViewById(R.id.Undo);
@@ -109,28 +118,30 @@ public class FieldTester extends Activity {
 		btnRecordStep.setText("Record Step #" + (n + 1));
 	}
 		
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		d("stopping");
+	}
 	
-	BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-	Set<BluetoothDevice> beaconsInRange = new HashSet<BluetoothDevice>();
-	
-	public void startACL()
-    {   	
-		CalculateLocation cl = new CalculateLocation();
-		cl.start();
-    }
+	public void onDestroy(){
+		super.onDestroy();
+		d("Destroying");	
+	}
 	
 	//Debug log function
-		public static void d(String s){
-			Log.d("debug", s);
-		}
-		
+	public static void d(String s){
+		Log.d("debug", s);
+	}
+	
 //////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////ACL Connection Thread Class///////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
 	/*
 	 * Attempted to use the RFCOMM connection to simulate an ACL link 'ping' -- doesnt work using the built in bluetooth stack.  
-	 * each ping takes 5seconds, and cant be done concurrently.
+	 * each ping takes 5seconds, and can't be done concurrently.
 	 * 
 	    private class AcceptThread extends Thread {
 		private String addr;
@@ -159,7 +170,7 @@ public class FieldTester extends Activity {
 				
 				a.connect(); 
 			}catch(Exception e){
-				//d(addr + " " + e.toString());
+				//d(addr + " " + e.toString()); 
 			}	   
 		}
 	}
@@ -185,23 +196,17 @@ public class FieldTester extends Activity {
 				//If this is true, then an ACL response was given by one of the beacons.  To get the beacon MAC that responded use intent.getExtras().get("android.bluetooth.device.extra.DEVICE").toString()
 				if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
 					BluetoothDevice bd = (BluetoothDevice) intent.getExtras().get("android.bluetooth.device.extra.DEVICE");
-					d("ACL success for: " + bd.toString());
 					beaconsInRange.add(bd);	
-					d("adding: size:" + Integer.toString(beaconsInRange.size()));
 				}
+				
+				//This if clause is used for the default discovery scan
 				if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 					BluetoothDevice bd = (BluetoothDevice) intent.getExtras().get("android.bluetooth.device.extra.DEVICE");
 					
-					
 					rssiVal.put(bd.toString(), intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE));
-					d("action found: " + bd.toString());
 					beaconsInRange.add(bd);
 					
-					locateClosest();
-					
-					
-					d("adding: size:" + Integer.toString(beaconsInRange.size()));
-					
+					locatePosition();
 				}
 				
 				if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action))
@@ -229,20 +234,11 @@ public class FieldTester extends Activity {
 			IntentFilter filter3 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 			IntentFilter filter4 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
 			
-			//filter.setPriority(9999);
-			//registerReceiver(mReceiver, filter);// Don't forget to unregister during onDestroy   
+			// TODO Don't forget to unregister during onDestroy  (currently never unregisters)
 			registerReceiver(mReceiver, filter2);
 			registerReceiver(mReceiver, filter3);
 			registerReceiver(mReceiver, filter4);
 	
-			
-	
-		/*	stringList.add("90:00:4E:FE:34:E1"); //DLaptop
-			stringList.add("78:A3:E4:A8:7E:48"); //DPhone
-			stringList.add("20:C9:D0:85:58:5A"); //Alap
-			stringList.add("D0:23:DB:24:81:46"); //APhone 
-			stringList.add("38:0A:94:A8:F8:76"); //Aandroid
-*/			
 			deviceName.put("90:00:4E:FE:34:E1", "David's Laptop");
 			deviceName.put("78:A3:E4:A8:7E:48", "David's iPhone");
 			deviceName.put("20:C9:D0:85:58:5A", "Alon's Laptop");
@@ -251,9 +247,29 @@ public class FieldTester extends Activity {
 			deviceName.put("CC:08:E0:A8:02:27", "B old iphone4");
 			deviceName.put("CC:08:E0:96:34:4D", "D old iphone4");
 			
-			//stringList.add("3C:D0:F8:6B:16:32"); //Bphone 
-			//stringList.add("90:00:4E:F8:70:79"); //BLaptop 
+			/////////////////////////////////////////////////////////////////////////
+			//TODO Currently only three beacons and their mid points are hard coded
+			//TODO this kind of information should be pulled from a database
+			//TODO this current chunk of code is for demo purposes only.
+			////////////////////////////////////////////////////////////////////////
+			String tempString;
+			tempString = "corner near CS office";
+			pointsOfInterest.put("CC:08:E0:96:34:4D", tempString);
+			tempString = "CS office (206, 207)";
+			pointsOfInterest.put("CC:08:E0:96:34:4DCC:08:E0:A8:02:27", tempString); // between b and d old iphone4
+			pointsOfInterest.put("CC:08:E0:A8:02:27CC:08:E0:96:34:4D", tempString); // between b and d old iphone4
+			tempString = "room 208, 209";
+			pointsOfInterest.put("CC:08:E0:A8:02:27", tempString);
+			tempString = "room 210, 211";
+			pointsOfInterest.put("CC:08:E0:A8:02:2778:A3:E4:A8:7E:48", tempString);
+			pointsOfInterest.put("78:A3:E4:A8:7E:48CC:08:E0:A8:02:27", tempString);
+			tempString = "room 212, 213";
+			pointsOfInterest.put("78:A3:E4:A8:7E:48", tempString);
 			
+			//////////////////////////////////////////////////////////////////////////////////////////////
+			//colOrder is used to make sure the write-to-database is always written in the correct order
+			//so rows/col stay static
+			//////////////////////////////////////////////////////////////////////////////////////////////
 			colOrder.put(0, "David's Laptop");
 			colOrder.put(1, "David's iPhone");
 			colOrder.put(2, "Alon's Laptop");
@@ -263,26 +279,23 @@ public class FieldTester extends Activity {
 			colOrder.put(6, "D old iphone4");
 		
 			
-			while(true){
-				d("::::::Starting::::::");
-				adapter.startDiscovery();
-				try {
-					Thread.sleep(10000); 
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//adapter.cancelDiscovery();
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block 
-					e.printStackTrace();
-				}
+			////////////////////////////////////////////////////////////////////////////////
+			//start an inquiry scan and then wait for ~11 seconds for the result
+			////////////////////////////////////////////////////////////////////////////////
+			d("::::::Starting::::::");
+			adapter.startDiscovery();
+			try {
+				Thread.sleep(11000); 
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block 
+				e.printStackTrace();
 			}
 		}
 	
-		private void locateClosest(){
+		private void locatePosition(){
+			//////////////////////////////////////////////////////////
+			//Find the closest beacon
+			//////////////////////////////////////////////////////////
 			Iterator<BluetoothDevice> biri = beaconsInRange.iterator();
 			
 			BluetoothDevice tbd;
@@ -302,17 +315,45 @@ public class FieldTester extends Activity {
 			final BluetoothDevice tempClosestBeacon = closestBeacon;
 			d(rssiVal.toString());
 			
+			///////////////////////////////////////////////////////////
+			//Find the second closest beacon
+			///////////////////////////////////////////////////////////
+			Iterator<BluetoothDevice> biri2 = beaconsInRange.iterator();
+			int tempCurrentHighest = -9999;
+			BluetoothDevice secondClosestBeacon = null;
+			while(biri2.hasNext())
+			{
+				tbd = biri2.next();
+				temp = rssiVal.get(tbd.toString());
+				if((temp > tempCurrentHighest) ){
+					if(tbd != tempClosestBeacon)
+					{
+						secondClosestBeacon = tbd;
+						tempCurrentHighest = temp;
+					}
+					
+				}
+			}
+			
+			final BluetoothDevice tempSecondClosestBeacon = secondClosestBeacon;
+			
+			//////////////////////////////////////////////////////////////////////////////////////////
+			//runOnUiThread is used currently for a quick and dirty way to output using button texts
+			///////////////////////////////////////////////////////////////////////////////////////////
 			runOnUiThread(new Runnable() {
 			      @Override
 			          public void run() {	
 			    	  		//Toast.makeText(FieldTester.this, "The closest beacon is: " + deviceName.get(tempClosestBeacon.toString()), Toast.LENGTH_LONG).show();
 			    	  		
-			    	  		Button btnUndo = (Button) findViewById(R.id.StopAndSave);
-			    	  		btnUndo.setText("closest:" + deviceName.get(tempClosestBeacon.toString()));
+			    	  		/*Button btnUndo = (Button) findViewById(R.id.StopAndSave);
+			    	  		if(tempClosestBeacon != null && tempSecondClosestBeacon != null)
+			    	  			btnUndo.setText("closest:" + deviceName.get(tempClosestBeacon.toString()) + "\nsecond:" + deviceName.get(tempSecondClosestBeacon.toString()));
+			    	  		else 
+			    	  			btnUndo.setText("didnt find two beacons");*/
 							
+			    	  		
+			    	  		
 							Button btnRecordStep = (Button) findViewById(R.id.StartWrite);
-							
-							
 							btnRecordStep.setText("David's Laptop: " + rssiVal.get("90:00:4E:FE:34:E1") +
 									"\nDavid's iPhone: " + rssiVal.get("78:A3:E4:A8:7E:48")+
 									"\nAlon's Laptop: " + rssiVal.get("20:C9:D0:85:58:5A")+
@@ -321,11 +362,60 @@ public class FieldTester extends Activity {
 									"\nB old iphone4: " + rssiVal.get("CC:08:E0:A8:02:27")+
 									"\nD old iphone4: " + rssiVal.get("CC:08:E0:96:34:4D")
 									);
-							
 			          }
 			   });
+			
+			
+			///////////////////////////////////////
+			//Find location
+			///////////////////////////////////////
+			if(tempClosestBeacon !=null && tempSecondClosestBeacon !=null)
+			{
+				int rssiOne = rssiVal.get(tempClosestBeacon.toString());
+				int rssiTwo = rssiVal.get(tempSecondClosestBeacon.toString());
+				
+				final int  BEACON_LOCATION_SENSITIVITY = 7;
+				if((rssiOne - rssiTwo) > BEACON_LOCATION_SENSITIVITY)
+				{
+					////////////////////////////////////////////////////////////////////////////////////
+					//closer to rssiOne beacon, so pull the correct data for that location
+					////////////////////////////////////////////////////////////////////////////////////
+					runOnUiThread(new Runnable() {
+					      @Override
+					          public void run() {	
+						    	  	Button btnUndo = (Button) findViewById(R.id.StopAndSave);
+					    	  		if(tempClosestBeacon != null && tempSecondClosestBeacon != null)
+					    	  		{
+					    	  			btnUndo.setText(pointsOfInterest.get(tempClosestBeacon.toString()));
+					    	  		}else {
+					    	  			btnUndo.setText("didnt find two beacons");
+					    	  		}
+					          }
+					   });
+				}
+				else if ((rssiOne - rssiTwo) > -(BEACON_LOCATION_SENSITIVITY) && (rssiOne - rssiTwo) < BEACON_LOCATION_SENSITIVITY)
+				{
+					////////////////////////////////////////////////////////////////////////////////////
+					//Halfway between two closest beacons, so pull the correct data for that location
+					////////////////////////////////////////////////////////////////////////////////////
+					runOnUiThread(new Runnable() {
+					      @Override
+					          public void run() {	
+					    	  Button btnUndo = (Button) findViewById(R.id.StopAndSave);
+				    	  		if(tempClosestBeacon != null && tempSecondClosestBeacon != null)
+				    	  		{
+				    	  			btnUndo.setText(pointsOfInterest.get(tempClosestBeacon.toString() + tempSecondClosestBeacon.toString()));
+				    	  		}
+				    	  		else {
+				    	  			btnUndo.setText("didnt find two beacons");
+				    	  		}
+					          }
+					   });
+				}
+			}
 		}
 		
+
 		
 		//TODO
 		//TODO NOT CURRENTLY USING THIS FOR PROTOTYPING SESSIONS, NEED TO ADD IT AGAIN TO DO PILOT DATA!!!!!
@@ -344,7 +434,6 @@ public class FieldTester extends Activity {
 				ls.add(iter.next().toString());
 			}
 	
-			d("list: " + ls.toString());
 			
 			String macTemp;
 			for(int i = 0; i<colOrder.size();i++)
@@ -366,7 +455,7 @@ public class FieldTester extends Activity {
 				WriterUtility.writeStep(lsSorted);
 				
 				//Clear beacons seen
-				lsSorted.clear();
+				lsSorted.clear(); 
 				ls.clear();
 				beaconsInRange.clear();
 			} catch (IOException e) {
