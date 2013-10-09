@@ -38,7 +38,7 @@ public class FieldTester extends Activity {
 	Set<BluetoothDevice> beaconsInRange = new HashSet<BluetoothDevice>();
 	
 	boolean isUndoEnabled = false;
-	WriterUtility mWriter = new WriterUtility();
+	WriterUtility mWriter = new WriterUtility(this);
 	ProgressBar pb;
 	
 	int n = 0;//debug
@@ -425,6 +425,7 @@ public class FieldTester extends Activity {
 			//AT this point in execution 'beaconsInRange' is a set of bluetooth 'beacons' (devices) that are 'seen' 
 			//For our test
 	
+			/*
 			d(beaconsInRange.toString());
 	
 			List<String> ls = new ArrayList<String>();
@@ -462,7 +463,7 @@ public class FieldTester extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	
+			 */
 	
 		}
 	
