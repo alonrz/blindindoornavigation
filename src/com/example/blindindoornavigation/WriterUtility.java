@@ -23,10 +23,6 @@ public class WriterUtility {
 
 	private SensorManager mSensorManager;
 	private Sensor sensor;
-	private float[] values = new float[3];
-	private float[] rotationMatrix = new float[9];
-	private float[] gravity = new float[3];
-	private float[] geomagnetic = new float[3];
 	private float mAzimuth;
 	private Context mContext;
 
@@ -36,6 +32,8 @@ public class WriterUtility {
 
 	public void startTest() {
 		sb = new StringBuilder();
+
+		// Sensor init
 		mSensorManager = (SensorManager) mContext
 				.getSystemService(Context.SENSOR_SERVICE);
 		sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
@@ -52,23 +50,26 @@ public class WriterUtility {
 	}
 
 	public void endTestAndSave() throws IOException {
+		Time time = new Time() {
+			{
+				setToNow();
+			}
+		};
+		endTestAndSave("beacon_data_" + time.format2445());
+	}
+
+	public void endTestAndSave(String filename) throws IOException {
 		try {
 			File rootDirectory = Environment.getExternalStorageDirectory();
-			Time time = new Time() {
-				{
-					setToNow();
-				}
-			};
-
 			File myDirectory = new File(rootDirectory.getAbsolutePath()
 					+ "/indoorNavData");
 			if (myDirectory.exists() == false) {
 				myDirectory.mkdir();
 			}
+			
 			// Create file name with time stamp.
-			File myFile = new File(myDirectory + "/beacon_data_"
-					+ time.format2445() + ".csv"); // write new file with time
-													// stamp
+			// write new file with time stamp
+			File myFile = new File(myDirectory + "/" + filename + ".csv"); 
 
 			if (myFile.exists() == false) {
 				myFile.createNewFile();
@@ -97,20 +98,21 @@ public class WriterUtility {
 		// *** Add more data such as sensors here ***
 
 		// Add time
-		sb.append(new Time() {{
+		sb.append(new Time() {
+			{
 				setToNow();
-			}}.format2445());
-		//Add compass heading
+			}
+		}.format2445());
+		// Add compass heading
 		// angle between the magnetic north direction
-	    // 0=North, 90=East, 180=South, 270=West
+		// 0=North, 90=East, 180=South, 270=West
 		sb.append("," + mAzimuth);
-		
-		
+
 		// size of list is always 6 beacons X 3 value = 18 values. //Fill in
 		// rest of non existing values with -999999
 		int i = 0;
 		for (; i < itemsToWrite.size(); i++) {
-			sb.append(","+itemsToWrite.get(i));
+			sb.append("," + itemsToWrite.get(i));
 
 		}
 		for (; i < 18; i++) {
