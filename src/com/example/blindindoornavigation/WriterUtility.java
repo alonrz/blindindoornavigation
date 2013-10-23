@@ -66,10 +66,10 @@ public class WriterUtility {
 			if (myDirectory.exists() == false) {
 				myDirectory.mkdir();
 			}
-			
+
 			// Create file name with time stamp.
 			// write new file with time stamp
-			File myFile = new File(myDirectory + "/" + filename + ".csv"); 
+			File myFile = new File(myDirectory + "/" + filename + ".csv");
 
 			if (myFile.exists() == false) {
 				myFile.createNewFile();
@@ -122,6 +122,14 @@ public class WriterUtility {
 		sb.append('\n');
 		return n;
 
+	}
+
+	/*
+	 * Write a single value at a time into an never ending string. 
+	 */
+	public void writeValue(String valueToWrite)
+	{
+		sb.append(valueToWrite + ",");
 	}
 
 	public int undoStep() {
