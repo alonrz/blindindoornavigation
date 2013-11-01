@@ -1,31 +1,21 @@
 package com.example.blindindoornavigation;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
-import android.os.Bundle;
-import android.os.Parcel;
-import android.os.ParcelUuid;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.bluetooth.*;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
@@ -116,6 +106,12 @@ public class MainActivity extends Activity {
 	public void onClick_GoToTestActivity(View view)
 	{
 		Intent myIntent = new Intent(this, FieldTester.class);
+		this.startActivity(myIntent);
+	}
+
+	public void onClick_ToSensorLand(View view)
+	{
+		Intent myIntent = new Intent(this, SensorActivity.class);
 		this.startActivity(myIntent);
 	}
 	

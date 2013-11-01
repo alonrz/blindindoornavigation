@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/txtAzimuth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Azimuth: "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:id="@+id/txtZ_axis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Z-axis: "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:id="@+id/txtX_axis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="X-axis: "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:id="@+id/txtY_axis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Y-axis: "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:id="@+id/txtVelocity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Velocity: "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp" >
+
+        <Button
+            android:id="@+id/btnSaveToFile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:onClick="onClick_Save"
+            android:text="Save Test" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:onClick="onClick_Cancel"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/btnRestartSensors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:onClick="onClick_RestartSensors"
+            android:text="Restart" />
+    </LinearLayout>
+
+</LinearLayout>

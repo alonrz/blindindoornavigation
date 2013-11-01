@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import android.os.Environment;
 import android.text.format.Time;
-import org.json.simple.parser.JSONParser;
+//import org.json.simple.parser.JSONParser;
 
 /**
  * This Will serve to read from DB or file. Any info that requires reading will be handled here
