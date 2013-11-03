@@ -2,6 +2,8 @@ package com.example.blindindoornavigation;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -36,11 +38,14 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	private boolean offset_set = false;
 	private boolean mFailed, isSensorRunning = true;
 
-	TextView txtAzimuth, txtZ_axis, txtX_axis, txtY_axis, txtVelocity;
+	TextView txtAzimuth, txtZ_axis, txtX_axis, txtY_axis, txtVelocity, txtSteps;
 	Button btnSave;
 	DecimalFormat df = new DecimalFormat();
 	WriterUtility writer;
 
+	long interval, lastEvent;
+	double lastVelocity, lastAccel;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,12 +60,17 @@ public class SensorActivity extends Activity implements SensorEventListener {
 				.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
 		df.setMaximumFractionDigits(4);
+		this.onPause(); //stop the sensors. 
 		
 
 	}
 
 	protected void onResume() {
 		super.onResume();
+		
+	}
+
+	private void registerListeners() {
 		isSensorRunning = true;
 		mSensorManager.registerListener(this, mOrientation,
 				SensorManager.SENSOR_DELAY_NORMAL);
@@ -75,6 +85,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 		txtY_axis = (TextView) findViewById(R.id.txtY_axis);
 		txtVelocity = (TextView) findViewById(R.id.txtVelocity);
 		btnSave = (Button) findViewById(R.id.btnSaveToFile);
+		txtSteps = (TextView) findViewById(R.id.txtSteps);
 		
 		writer = new WriterUtility(this);
 		writer.startTest();
@@ -133,25 +144,6 @@ public class SensorActivity extends Activity implements SensorEventListener {
 			return;
 		}
 
-		// if (SensorManager.getRotationMatrix(mRotation, null, mAccel,
-		// mGeoMagnetic)) // R, I, gravity, geomagnetic))
-		// {
-		//
-		//
-		// // SensorManager.remapCoordinateSystem(mRotation,
-		// // SensorManager.AXIS_X, SensorManager.AXIS_Y,
-		// // mRemapedRotation);
-		//
-		// // fills array with z in [0], x in [1] and y in [2]
-		// SensorManager.getOrientation(mRotation, mOrientation2);
-		//
-		// mAzimuth = (float) Math.round((Math.toDegrees(mOrientation2[0])));
-		//
-		// txtAzimuth.setText("Azimuth: " + mAzimuth);
-		// txtX_axis.setText("X axis: " + df.format(mLinearAccel[1]));
-		// txtY_axis.setText("Y axis: " + df.format(mLinearAccel[2]));
-		// }
-
 		// Register offsets:
 		if (offset_set == false) {
 			offsetX = mLinearAccel[0];
@@ -170,10 +162,10 @@ public class SensorActivity extends Activity implements SensorEventListener {
 				+ (df.format(mLinearAccel[0] - offsetX)) + ")");
 		txtY_axis.setText("Y axis: " + df.format(mLinearAccel[1])
 				+ "\n  (with offset = "
-				+ (df.format(mLinearAccel[1] - offsetX)) + ")");
+				+ (df.format(mLinearAccel[1] - offsetY)) + ")");
 		txtZ_axis.setText("Z axis: " + df.format(mLinearAccel[2])
 				+ "\n  (with offset = "
-				+ (df.format(mLinearAccel[2] - offsetX)) + ")");
+				+ (df.format(mLinearAccel[2] - offsetZ)) + ")");
 
 		long now = System.currentTimeMillis();
 		interval = Math.abs(lastEvent - now);
@@ -185,15 +177,16 @@ public class SensorActivity extends Activity implements SensorEventListener {
 		 * passed To calculate the velocity traveled. V_0 is the initial
 		 * velocity at each time interval passed so we keep updating it.
 		 */
-		lastAccel = mLinearAccel[1] - offsetY; // Y- axis
+		//lastAccel = mLinearAccel[1] - offsetY; // Y- axis
+		lastAccel = mLinearAccel[1] - offsetY + mLinearAccel[0]-offsetX +
+				mLinearAccel[2]-offsetZ; // ALL axis
 
 		txtVelocity.setText("velocity: " + df.format(lastVelocity) + " m/s");
 		Log.i("Accel", Double.toString(lastAccel));
 		writer.writeValue(Double.toString(lastAccel));
+		CalculateSteps(lastAccel);
 	}
 
-	long interval, lastEvent;
-	double lastVelocity, lastAccel;
 	
 	/*
 	 * onClick Events
@@ -202,7 +195,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	String lastFileNameSaved = new Time() {{ setToNow(); }}.format2445();
 	public void onClick_RestartSensors(View view)
 	{
-		onResume();
+		registerListeners();
 	}
 	
 	public void onClick_Save(View view)
@@ -253,5 +246,64 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	{
 		finish();
 	}
+	//vars for calculating steps
+	double maxTotal, minTotal, maxLocal, minLocal, deltaPositive = 1, deltaNegative = 1;
+	int mSteps=0;
+	List<StepsListener> mListeners = new ArrayList<StepsListener>();
+	boolean isPositive = true;
 	
+	public void addStepsListener(StepsListener listener)
+	{
+		mListeners.add(listener);
+	}
+	void CalculateSteps(double lastAccel)
+	{
+		//if acceleration is in delta (buffer) it should be ignored. 
+		if(lastAccel > 0 && lastAccel < deltaPositive) return;
+		if(lastAccel < 0 && lastAccel > deltaNegative) return;
+		
+		//total max and min
+		if(maxTotal<lastAccel)
+		{
+			maxTotal = lastAccel;
+			deltaPositive = maxTotal/3;
+		}
+		if(minTotal>lastAccel) 
+		{
+			minTotal = lastAccel;
+			deltaNegative = minTotal/3;
+		}
+		
+		//Check if transitioned from positive to negative or other way
+		if(isPositive == true)
+		{
+			if(lastAccel < deltaNegative) isPositive = false;
+		}
+		else
+		{
+			if(lastAccel > deltaPositive) 
+			{
+				isPositive = true;
+				stepHasBeenTaken(++mSteps);
+			}
+		}
+		
+		
+		//When a step has been taken, call the interface
+		
+		
+		
+	}
+	
+	void stepHasBeenTaken(int steps)
+	{
+		//Call all listeners
+		for(StepsListener sl : mListeners)
+			sl.stepHasBeenTaken(steps);
+		
+		//Write to UI for debug
+		txtSteps.setText("Steps: " + steps);
+	}
 }
+
+
