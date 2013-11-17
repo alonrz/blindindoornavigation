@@ -142,14 +142,19 @@ public class MapHandler {
 	}
 	
 	//A*
-	public List<VirtualSpot> getRoute(String start, String dest)
+	public Route getRoute(String start, String dest)
 	{
 		PriorityQueue<VirtualSpot> tovisit;
-		ToDestination todest = new ToDestination(vSpots.get(dest));
+		
+		VirtualSpot vstart = poIs.get(start).getVirtualSpot();
+		VirtualSpot vdest = poIs.get(dest).getVirtualSpot();
+		
+//		VirtualSpot vstart = vSpots.get(start);
+//		VirtualSpot vdest = vSpots.get(dest);
+		
+		ToDestination todest = new ToDestination(vdest);
 		tovisit = new PriorityQueue<VirtualSpot>(20, todest);
 		
-		VirtualSpot vstart = vSpots.get(start);
-		VirtualSpot vdest = vSpots.get(dest);
 		tovisit.add(vstart);
 		
 		List<VirtualSpot> visited = new ArrayList<VirtualSpot>();
@@ -168,7 +173,7 @@ public class MapHandler {
 			currentVspot = tovisit.poll();
 			
 			if(currentVspot.equals(vdest))
-				return createRoute(camefrom, vdest);
+				return new Route(createRoute(camefrom, vdest));
 			
 			visited.add(currentVspot);
 			

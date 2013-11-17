@@ -115,6 +115,19 @@ public class VirtualSpot {
 		return Math.sqrt((Math.pow(x - vs.getX(), 2) + Math.pow(y - vs.getY(), 2)));
 	}
 	
+	public int directionTo(VirtualSpot vs)
+	{
+		for(int i = 0; i < vSpots.size(); i++)
+		{
+			if(vs == vSpots.valueAt(i).getVS())
+			{
+				return vSpots.keyAt(i);
+			}
+		}
+		
+		return -1;
+	}
+	
 	public String toString()
 	{
 		String temp = "name: " + name + ", coordinates: " + x + ", " + y + "\nNext to:\n";
