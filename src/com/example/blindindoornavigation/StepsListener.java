@@ -19,5 +19,4 @@ public interface StepsListener {
 	 * @param totalDistance - number of steps * step length = distance traveled since reset or start. 
 	 */
 	public void stepHasBeenTaken(boolean hasAccurateDistance, int totalDistance);
-	
 }
