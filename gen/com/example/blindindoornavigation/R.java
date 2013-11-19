@@ -29,7 +29,7 @@ public final class R {
         public static final int StartWrite=0x7f090005;
         public static final int StopAndSave=0x7f090006;
         public static final int Undo=0x7f090009;
-        public static final int action_settings=0x7f090014;
+        public static final int action_settings=0x7f090015;
         public static final int btnBackEnd=0x7f090001;
         public static final int btnCancel=0x7f090011;
         public static final int btnFrontEnd=0x7f090000;
@@ -41,6 +41,7 @@ public final class R {
         public static final int txtAzimuth=0x7f09000b;
         public static final int txtBTIndicator=0x7f090002;
         public static final int txtDeviceOne=0x7f090003;
+        public static final int txtDistance=0x7f090014;
         public static final int txtSteps=0x7f090013;
         public static final int txtVelocity=0x7f09000f;
         public static final int txtX_axis=0x7f09000d;

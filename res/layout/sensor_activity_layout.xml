@@ -70,4 +70,12 @@
         android:layout_height="wrap_content"
         android:text="Steps: "
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	<TextView
+	    android:id="@+id/txtDistance"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Distance: "
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
+
 </LinearLayout>

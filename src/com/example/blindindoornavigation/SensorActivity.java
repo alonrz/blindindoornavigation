@@ -46,6 +46,12 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	long interval, lastEvent;
 	double lastVelocity, lastAccel;
 	
+	//vars for calculating steps
+	double maxTotal, minTotal, maxLocal, minLocal, deltaPositive = 1, deltaNegative = 1;
+	int mSteps=0;
+	List<StepsListener> mListeners = new ArrayList<StepsListener>();
+	boolean isPositive = true;
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -173,16 +179,8 @@ public class SensorActivity extends Activity implements SensorEventListener {
 		writer.writeValue(Double.toString(lastAccel));
 		CalculateSteps(lastAccel);
 	}
-
 	
-	
-	//vars for calculating steps
-	double maxTotal, minTotal, maxLocal, minLocal, deltaPositive = 1, deltaNegative = 1;
-	int mSteps=0;
-	List<StepsListener> mListeners = new ArrayList<StepsListener>();
-	boolean isPositive = true;
-	
-	public void addStepsListener(StepsListener listener)
+	public void RegisterStepsListener(StepsListener listener)
 	{
 		mListeners.add(listener);
 	}
@@ -292,6 +290,41 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	public void onClick_Cancel(View view)
 	{
 		finish();
+	}
+	
+	public void onClick_StartCalibrate(View view)
+	{
+		
+		//Ask use for file name
+		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+		alertBuilder.setTitle("Calibrate Steps");
+		alertBuilder.setMessage("Press 'OK' and walk normally for 9m (~30f).\nPress Stop once you're done.");
+		
+		alertBuilder.setPositiveButton("OK", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+				//Start calibration
+				
+			}
+		});
+		alertBuilder.setNegativeButton("Cancel", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// Do thing. Cancel was pressed. 
+			}
+		});
+		
+		AlertDialog alert = alertBuilder.create();
+		alert.show();
+	}
+	
+	public void onClick_StopCalibrate(View view)
+	{
+		
+	
 	}
 }
 
