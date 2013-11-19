@@ -26,13 +26,13 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
 	private SensorManager mSensorManager;
 	private Sensor mOrientation, mAccelerometer, mLinearAccelerometer;
-	private float[] mOrientation2 = new float[3];
-	private float[] mRotation = new float[9];
-	private float[] mRemapedRotation = new float[9];
+//	private float[] mOrientation2 = new float[3];
+//	private float[] mRotation = new float[9];
+//	private float[] mRemapedRotation = new float[9];
 	private float[] mAccel = new float[3];
 	private float[] mLinearAccel = new float[3];
 	private float[] mGeoMagnetic = new float[3];
-	private float mAzimuth;
+//	private float mAzimuth;
 
 	private float offsetY, offsetX, offsetZ;
 	private boolean offset_set = false;
@@ -99,23 +99,10 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
 	void onSuccess() {
 		Log.i(this.getClass().toString(), "onSuccess entered");
-		// if (mFailed)
-		// mFailed = false;
-		// // Convert the azimuth to degrees in 0.5 degree resolution.
-		// mAzimuth = (float) -Math.round((Math.toDegrees(mOrientation2[0])) *
-		// 2) / 2;
-		// // Adjust the range: 0 < range <= 360 (from: -180 < range <= 180).
-		// //mAzimuth = (mAzimuth+360)%360; // alternative: mAzimuth
-		// =mAzimuth>=0
-		// // ? mAzimuth : mAzimuth+360;
-
 	}
 
 	void onFailure() {
 		Log.i(this.getClass().toString(), "onFailure entered");
-		// if (!mFailed) {
-		// mFailed = true;
-		// }
 	}
 
 	@Override
@@ -188,10 +175,70 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	}
 
 	
-	/*
-	 * onClick Events
+	
+	//vars for calculating steps
+	double maxTotal, minTotal, maxLocal, minLocal, deltaPositive = 1, deltaNegative = 1;
+	int mSteps=0;
+	List<StepsListener> mListeners = new ArrayList<StepsListener>();
+	boolean isPositive = true;
+	
+	public void addStepsListener(StepsListener listener)
+	{
+		mListeners.add(listener);
+	}
+	void CalculateSteps(double lastAccel)
+	{
+		//if acceleration is in delta (buffer) it should be ignored. 
+		if(lastAccel > 0 && lastAccel < deltaPositive) return;
+		if(lastAccel < 0 && lastAccel > deltaNegative) return;
+		
+		//total max and min
+		if(maxTotal<lastAccel)
+		{
+			maxTotal = lastAccel;
+			deltaPositive = maxTotal/3;
+		}
+		if(minTotal>lastAccel) 
+		{
+			minTotal = lastAccel;
+			deltaNegative = minTotal/3;
+		}
+		
+		//Check if transitioned from positive to negative or other way
+		if(isPositive == true)
+		{
+			if(lastAccel < deltaNegative) isPositive = false;
+		}
+		else
+		{
+			if(lastAccel > deltaPositive) 
+			{
+				isPositive = true;
+				stepDetected(++mSteps);
+			}
+		}
+	}
+	
+	/**
+	 * This method will call all listeners and alert them of the number of steps
+	 * @param steps - takes an integer off total number of steps.
 	 */
-	//Given file name is the time now. 
+	void stepDetected(int steps)
+	{
+		//Call all listeners
+		for(StepsListener sl : mListeners)
+			sl.stepHasBeenTaken(steps);
+		
+		//Write to UI for debug
+		txtSteps.setText("Steps: " + steps);
+	}
+	
+	
+	/************************************
+	 **     onClick Events below       **
+	 ************************************/
+	
+	//Given file name is formatted to reflect the time now. 
 	String lastFileNameSaved = new Time() {{ setToNow(); }}.format2445();
 	public void onClick_RestartSensors(View view)
 	{
@@ -245,64 +292,6 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	public void onClick_Cancel(View view)
 	{
 		finish();
-	}
-	//vars for calculating steps
-	double maxTotal, minTotal, maxLocal, minLocal, deltaPositive = 1, deltaNegative = 1;
-	int mSteps=0;
-	List<StepsListener> mListeners = new ArrayList<StepsListener>();
-	boolean isPositive = true;
-	
-	public void addStepsListener(StepsListener listener)
-	{
-		mListeners.add(listener);
-	}
-	void CalculateSteps(double lastAccel)
-	{
-		//if acceleration is in delta (buffer) it should be ignored. 
-		if(lastAccel > 0 && lastAccel < deltaPositive) return;
-		if(lastAccel < 0 && lastAccel > deltaNegative) return;
-		
-		//total max and min
-		if(maxTotal<lastAccel)
-		{
-			maxTotal = lastAccel;
-			deltaPositive = maxTotal/3;
-		}
-		if(minTotal>lastAccel) 
-		{
-			minTotal = lastAccel;
-			deltaNegative = minTotal/3;
-		}
-		
-		//Check if transitioned from positive to negative or other way
-		if(isPositive == true)
-		{
-			if(lastAccel < deltaNegative) isPositive = false;
-		}
-		else
-		{
-			if(lastAccel > deltaPositive) 
-			{
-				isPositive = true;
-				stepHasBeenTaken(++mSteps);
-			}
-		}
-		
-		
-		//When a step has been taken, call the interface
-		
-		
-		
-	}
-	
-	void stepHasBeenTaken(int steps)
-	{
-		//Call all listeners
-		for(StepsListener sl : mListeners)
-			sl.stepHasBeenTaken(steps);
-		
-		//Write to UI for debug
-		txtSteps.setText("Steps: " + steps);
 	}
 }
 
