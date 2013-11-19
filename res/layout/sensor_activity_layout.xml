@@ -71,6 +71,28 @@
         android:text="Steps: "
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+	<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp" >
+        
+        <Button
+	    android:id="@+id/btnStartCalibrate"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="10dp"
+	    android:onClick="onClick_StartCalibrate"
+	    android:text="Start\n Calibration" />
+        
+         <Button
+	    android:id="@+id/btnStartCalibrate"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="10dp"
+	    android:onClick="onClick_StopCalibrate"
+	    android:text="Stop\n Calibration" />
+    </LinearLayout>
+
 	<TextView
 	    android:id="@+id/txtDistance"
 	    android:layout_width="wrap_content"

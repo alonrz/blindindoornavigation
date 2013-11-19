@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SensorActivity extends Activity implements SensorEventListener {
 
@@ -38,7 +39,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	private boolean offset_set = false;
 	private boolean mFailed, isSensorRunning = true;
 
-	TextView txtAzimuth, txtZ_axis, txtX_axis, txtY_axis, txtVelocity, txtSteps;
+	TextView txtAzimuth, txtZ_axis, txtX_axis, txtY_axis, txtVelocity, txtSteps, txtDistance;
 	Button btnSave;
 	DecimalFormat df = new DecimalFormat();
 	WriterUtility writer;
@@ -49,8 +50,13 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	//vars for calculating steps
 	double maxTotal, minTotal, maxLocal, minLocal, deltaPositive = 1, deltaNegative = 1;
 	int mSteps=0;
-	List<StepsListener> mListeners = new ArrayList<StepsListener>();
+	static List<StepsListener> mListeners = new ArrayList<StepsListener>();
 	boolean isPositive = true;
+		
+	//Given file name is formatted to reflect the time now. 
+	String lastFileNameSaved = new Time() {{ setToNow(); }}.format2445();
+	private int mStepLength = 60; //The size of each step in cm
+	private int mDistanceWalked = 0;	
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +98,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 		txtVelocity = (TextView) findViewById(R.id.txtVelocity);
 		btnSave = (Button) findViewById(R.id.btnSaveToFile);
 		txtSteps = (TextView) findViewById(R.id.txtSteps);
+		txtDistance = (TextView) findViewById(R.id.txtDistance);
 		
 		writer = new WriterUtility(this);
 		writer.startTest();
@@ -180,10 +187,15 @@ public class SensorActivity extends Activity implements SensorEventListener {
 		CalculateSteps(lastAccel);
 	}
 	
-	public void RegisterStepsListener(StepsListener listener)
+	/**
+	 * Register your instance to get event alert for steps taken
+	 * @param listener an instance of StepsListener
+	 */
+	public static void RegisterStepsListener(StepsListener listener)
 	{
 		mListeners.add(listener);
 	}
+	
 	void CalculateSteps(double lastAccel)
 	{
 		//if acceleration is in delta (buffer) it should be ignored. 
@@ -229,6 +241,8 @@ public class SensorActivity extends Activity implements SensorEventListener {
 		
 		//Write to UI for debug
 		txtSteps.setText("Steps: " + steps);
+		mDistanceWalked = mSteps * mStepLength;
+		txtDistance.setText("Distance: " + mDistanceWalked);
 	}
 	
 	
@@ -236,11 +250,11 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	 **     onClick Events below       **
 	 ************************************/
 	
-	//Given file name is formatted to reflect the time now. 
-	String lastFileNameSaved = new Time() {{ setToNow(); }}.format2445();
 	public void onClick_RestartSensors(View view)
 	{
 		registerListeners();
+		mSteps = 0;
+		mDistanceWalked = 0;
 	}
 	
 	public void onClick_Save(View view)
@@ -293,20 +307,20 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	}
 	
 	public void onClick_StartCalibrate(View view)
-	{
-		
+	{	
 		//Ask use for file name
 		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
 		alertBuilder.setTitle("Calibrate Steps");
-		alertBuilder.setMessage("Press 'OK' and walk normally for 9m (~30f).\nPress Stop once you're done.");
+		alertBuilder.setMessage("Press 'OK' and walk normally for 9m (~30f). Press Stop once you're done.");
 		
 		alertBuilder.setPositiveButton("OK", new OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				
-				//Start calibration
-				
+				//Start calibration - reset fields
+				mSteps = 0;
+				mDistanceWalked = 0;
 			}
 		});
 		alertBuilder.setNegativeButton("Cancel", new OnClickListener() {
@@ -323,8 +337,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	
 	public void onClick_StopCalibrate(View view)
 	{
-		
-	
+		if(mSteps != 0)
+			mStepLength = 900/mSteps;
+		txtDistance.setText(String.valueOf(mStepLength));
 	}
 }
 
