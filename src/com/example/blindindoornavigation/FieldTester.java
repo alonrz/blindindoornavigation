@@ -40,7 +40,7 @@ public class FieldTester extends Activity {
 	boolean firstTimeBoolean = true;
 	String CalculatedLocation = "-1";
 
-
+	
 
 
 	BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
@@ -118,8 +118,8 @@ public class FieldTester extends Activity {
 		
 		
 		/////////////////////////////////////////////////////////////////////////
-		//TODO Currently only three beacons and their mid points are hard coded
-		//TODO this kind of information should be pulled from a database
+		//TODO Currently only three beacons and their mid points are hard coded.
+		//TODO this kind of information should be pulled from a database.
 		//TODO this current chunk of code is for demo purposes only.
 		////////////////////////////////////////////////////////////////////////
 		pointsOfInterest.put("CC:08:E0:96:34:4D", "0");
@@ -187,6 +187,9 @@ public class FieldTester extends Activity {
 		
 		//InitBluetoothLocationServices();
 		InitBluetoothLocationServices(DeviceOrder);
+		
+
+		
 	}
 
 	public void onClick_StartWrite(View view) throws IOException { 
@@ -324,11 +327,12 @@ public class FieldTester extends Activity {
 
 	}
 
-	List<LocationListener> mListeners = new ArrayList<LocationListener>();
-	public void addLocationListener(LocationListener listener)
+	static List<LocationListener> mListeners = new ArrayList<LocationListener>();
+	public static void addLocationListener(LocationListener listener)
     {
             mListeners.add(listener);
     }
+	
 	private class discover extends Thread {
 
 		public discover() {
@@ -598,4 +602,20 @@ btnUndo.setText("didnt find two beacons");*/
 
 
 	}
+	
+	
+	
+	
+	private class temp implements LocationListener{
+
+		@Override
+		public void newLocationHasBeenCalculated(String LocationCalculated) {
+			Log.d("debug", LocationCalculated);
+			
+		}
+		
+		
+	}
+	
+	
 }
