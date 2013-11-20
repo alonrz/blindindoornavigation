@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class FieldTester extends Activity implements LocationListener {
@@ -145,7 +146,8 @@ public class FieldTester extends Activity implements LocationListener {
 	@Override
 	public void newLocationHasBeenCalculated(String LocationCalculated) {
 		d("Newlocationhasbeencalculated in callback: " + LocationCalculated);
-		
+		//TextView ts = (TextView) findViewById(R.id.testbt);
+		//ts.setText(LocationCalculated);
 	}
 
 	//Debug log function

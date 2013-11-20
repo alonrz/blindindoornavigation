@@ -4,6 +4,7 @@ import com.example.blindindoornavigation.R;
 
 import android.os.Bundle;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -20,14 +21,29 @@ public class BrowseDescription extends ListActivity {
 		String[] values = new String[] { "Prof Yoon's Office", "Prof Puder's Office", "CS Office"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 		        android.R.layout.simple_list_item_1, values);
-		    setListAdapter(adapter);
+		setListAdapter(adapter);
 		
 	}
 	
 	@Override
 	  protected void onListItemClick(ListView l, View v, int position, long id) {
 	    String item = (String) getListAdapter().getItem(position);
-	    Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
+	    if (item.equals("Prof Yoon's Office")){
+	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
+	    	intent.putExtra("roomNumber", 910);
+	    	this.startActivity(intent);
+	    }
+	    else if (item.equals("Prof Puder's Office")){
+	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
+	    	intent.putExtra("roomNumber", 909);
+	    	this.startActivity(intent);
+	    }
+	    else if (item.equals("CS Office")){
+	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
+	    	intent.putExtra("roomNumber", 906);
+	    	this.startActivity(intent);
+	    }
+	    
 	  }
 	
 	@Override
@@ -45,9 +61,13 @@ public class BrowseDescription extends ListActivity {
 	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState){
-		
+		super.onSaveInstanceState(savedInstanceState);
 	}
 	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+	    super.onRestoreInstanceState(savedInstanceState);
+	}
 	
 	
 	@Override

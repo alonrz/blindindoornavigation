@@ -37,7 +37,7 @@ public class UIActivity extends ListActivity {
 	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
 	    	this.startActivity(intent);
 	    } else if (item.equals("Calibrate Steps")){
-	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
+	    	Intent intent = new Intent(this, CalibrateStep.class);
 	    	this.startActivity(intent);
 	    }
 	  }

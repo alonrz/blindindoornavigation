@@ -41,14 +41,14 @@
         android:textSize="30sp" />
 
     <TextView
-        android:id="@+id/calcDistance"
+        android:id="@+id/calcDistanceTaken_cl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
 
     <Button
-        android:id="@+id/uiTestBtn"
+        android:id="@+id/uiStopCalc_cl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -58,10 +58,10 @@
         android:text="Test" />
 
     <Button
-        android:id="@+id/uiTestBT"
+        android:id="@+id/uiStartCalc_cl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/uiTestBtn"
+        android:layout_below="@+id/calcDistanceTaken_cl"
         android:layout_centerHorizontal="true"
         android:onClick="onClickStartBT"
         android:text="Test BT" />
@@ -70,7 +70,8 @@
         android:id="@+id/virtualSpot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView1"
-        android:layout_toRightOf="@+id/uiTestBT" />
+        android:layout_alignTop="@+id/textView1"
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@+id/uiStartCalc_cl" />
 
 </RelativeLayout>

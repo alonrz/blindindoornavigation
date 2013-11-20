@@ -1,5 +1,7 @@
 package com.example.uipackage;
 
+import indoorNavigationMap.*;
+
 import com.example.blindindoornavigation.DiscoverLocation;
 import com.example.blindindoornavigation.R;
 import com.example.blindindoornavigation.StepsManager;
@@ -26,6 +28,7 @@ import android.widget.ImageView.ScaleType;
 
 public class CurrentLocationActivity extends Activity implements SensorEventListener, StepsListener, LocationListener {
 
+	private int location;
 	private SensorManager mSensorManager;
 	private Sensor mOrientation, mAccelerometer;
 	private float[] mOrientation2 = new float[3];
@@ -36,7 +39,9 @@ public class CurrentLocationActivity extends Activity implements SensorEventList
 	private float mAzimuth;
 	private int filter_tmp = 0;
 	private boolean mFailed;
-	DiscoverLocation cl = new DiscoverLocation(this); 
+	DiscoverLocation cl = new DiscoverLocation(this);
+	private MapHandler ninethFloor = (new FloorMap()).getMap();
+	private Route route;
 
 	StepsManager mStepsManager = StepsManager.getStepsManager();
 
@@ -49,6 +54,18 @@ public class CurrentLocationActivity extends Activity implements SensorEventList
 				.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		mAccelerometer = mSensorManager
 				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		location = getIntent().getIntExtra("roomNumber", -1);
+		
+		TextView ts = (TextView) findViewById(R.id.calcDistanceTaken_cl);
+		ts.setText(""+location);
+		route = ninethFloor.getRoute("906", ""+location);
+		try {
+			mStepsManager.registerListener(this);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 	}
 
@@ -187,20 +204,20 @@ public class CurrentLocationActivity extends Activity implements SensorEventList
 		// TODO Auto-generated method stub
 		if(hasAccurateDistance == false)
 			return;
-		TextView calcDistance = (TextView) findViewById(R.id.calcDistance);
+		TextView calcDistance = (TextView) findViewById(R.id.calcDistanceTaken_cl);
 		calcDistance.setText("Distance: " + totalDistance);
 		
 	}
 
 
 	public void onClickStart(View view) throws Exception{
-		mStepsManager.registerListener(this);
+		mStepsManager.reset();
 	}
 	
 	public void onClickStartBT(View view) throws Exception{
-	//	cl.InitBluetoothLocationServices();
-	//	cl.registerLocationListener(this);
-	//	cl.scanForDevices();
+		cl.InitBluetoothLocationServices();
+		cl.registerLocationListener(this);
+		cl.scanForDevices();
 		
 	}
 
@@ -210,7 +227,7 @@ public class CurrentLocationActivity extends Activity implements SensorEventList
 		// TODO Auto-generated method stub
 		TextView currVS = (TextView) findViewById(R.id.virtualSpot);
 		d("newLocation = " + LocationCalculated);
-		//currVS.setText("here");
+		currVS.setText("LocationCalculated");
 		
 	}
 	

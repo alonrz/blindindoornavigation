@@ -42,6 +42,8 @@
         </activity>
         <activity android:name="com.example.uipackage.NearPOI">
         </activity>
+        <activity android:name="com.example.uipackage.CalibrateStep">
+        </activity>
         <activity android:name="com.example.blindindoornavigation.FieldTester" >
         </activity>
         <activity android:name="com.example.blindindoornavigation.SensorActivity" >
