@@ -30,7 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class FieldTester extends Activity {
+public class FieldTester extends Activity implements LocationListener {
 	Hashtable<String, Short> rssiVal = new Hashtable<String, Short>();
 	//Hashtable<String, String> deviceName = new Hashtable<String, String>();
 	Hashtable<Integer, String> colOrder= new Hashtable<Integer, String>(); //used for pilot test to keep certain beacons in column order
@@ -54,126 +54,6 @@ public class FieldTester extends Activity {
 	int n = 0;//debug
  
 
-	/**
-	 * expects a array of physical hardware MAC addresses in the order they are set up in a building.  
-	 * I.e. if beacon 1 is next to beacon 2 which is next to beacon 3, the list has to have MAC of beacon 
-	 * one, MAC of beacon two, MAC of beacon three... etc. 
-	 * 
-	 * @param ListOfBluetoothBeacons
-	 * @return 
-	 */
-	void InitBluetoothLocationServices(String[] ListOfBluetoothBeacons)
-	{
-
-		int locationCounter=0;
-		for(int i = 0; i < ListOfBluetoothBeacons.length; i++){
-		
-				pointsOfInterest.put(ListOfBluetoothBeacons[i], Integer.toString(locationCounter++));	
-				
-				if(i < ListOfBluetoothBeacons.length - 1){
-					pointsOfInterest.put(ListOfBluetoothBeacons[i].concat(ListOfBluetoothBeacons[i+1]), Integer.toString(locationCounter));
-					pointsOfInterest.put(ListOfBluetoothBeacons[i+1].concat(ListOfBluetoothBeacons[i]), Integer.toString(locationCounter++));
-				}
-
-		}
-		d(pointsOfInterest.toString());
-	}
-	
-	int InitBluetoothLocationServices()
-	{
-		/*deviceName.put("90:00:4E:FE:34:E1", "David's Laptop");
-		deviceName.put("78:A3:E4:A8:7E:48", "David's iPhone"); 
-		deviceName.put("20:C9:D0:85:58:5A", "Alon's Laptop");
-		deviceName.put("D0:23:DB:24:81:46", "Alon's iPhone");
-		deviceName.put("38:0A:94:A8:F8:76", "Alon's Android");
-		deviceName.put("CC:08:E0:A8:02:27", "B old iphone4");
-		deviceName.put("CC:08:E0:96:34:4D", "D old iphone4");
-		deviceName.put("00:02:72:C6:A3:C6", "D Laptop beacon");
-		deviceName.put("00:02:72:C6:A3:A4", "D old laptop beacon");
-		deviceName.put("00:02:72:C6:A3:89", "B old laptop beacon");
-		deviceName.put("00:02:72:3F:4E:8B", "Beacon 4");*/
-
-		//////////////////////////////////////////////////////////////////////////////////////////////
-		//colOrder is used to make sure the write-to-database is always written in the correct order
-		//so rows/col stay static
-		//////////////////////////////////////////////////////////////////////////////////////////////
-		
-		
-		colOrder.put(0, "90:00:4E:FE:34:E1");
-		colOrder.put(1, "78:A3:E4:A8:7E:48");
-		colOrder.put(2, "20:C9:D0:85:58:5A");
-		colOrder.put(3, "D0:23:DB:24:81:46");
-		colOrder.put(4, "38:0A:94:A8:F8:76");  
-		colOrder.put(5, "CC:08:E0:A8:02:27");
-		colOrder.put(6, "CC:08:E0:96:34:4D");
-		colOrder.put(7, "00:02:72:C6:A3:C6");
-		colOrder.put(8, "00:02:72:C6:A3:A4");
-		colOrder.put(9, "00:02:72:C6:A3:89");
-		colOrder.put(10, "00:02:72:3F:4E:8B"); 
-
-
-		for(int i=0;i<colOrder.size(); i++){
-			temp.add("syncPulse");
-		}
-		
-		
-		/////////////////////////////////////////////////////////////////////////
-		//TODO Currently only three beacons and their mid points are hard coded.
-		//TODO this kind of information should be pulled from a database.
-		//TODO this current chunk of code is for demo purposes only.
-		////////////////////////////////////////////////////////////////////////
-		pointsOfInterest.put("CC:08:E0:96:34:4D", "0");
-		pointsOfInterest.put("CC:08:E0:96:34:4DCC:08:E0:A8:02:27", "1"); // between b and d old iphone4
-		pointsOfInterest.put("CC:08:E0:A8:02:27CC:08:E0:96:34:4D", "1"); // between b and d old iphone4
-		
-		pointsOfInterest.put("CC:08:E0:A8:02:27", "2");
-		
-		pointsOfInterest.put("CC:08:E0:A8:02:2778:A3:E4:A8:7E:48", "3");
-		pointsOfInterest.put("78:A3:E4:A8:7E:48CC:08:E0:A8:02:27", "3");
-		
-		pointsOfInterest.put("78:A3:E4:A8:7E:48", "4");
-
-		pointsOfInterest.put("78:A3:E4:A8:7E:4838:0A:94:A8:F8:76", "5");
-		pointsOfInterest.put("38:0A:94:A8:F8:7678:A3:E4:A8:7E:48", "5");
-
-		pointsOfInterest.put("38:0A:94:A8:F8:76", "6");
-		
-		pointsOfInterest.put("38:0A:94:A8:F8:7620:C9:D0:85:58:5A", "7");
-		pointsOfInterest.put("20:C9:D0:85:58:5A38:0A:94:A8:F8:76", "7");
-
-		pointsOfInterest.put("20:C9:D0:85:58:5A", "8");
-
-		pointsOfInterest.put("20:C9:D0:85:58:5A90:00:4E:FE:34:E1", "9");
-		pointsOfInterest.put("90:00:4E:FE:34:E120:C9:D0:85:58:5A", "9");
-
-		pointsOfInterest.put("90:00:4E:FE:34:E1", "10");
-
-		pointsOfInterest.put("90:00:4E:FE:34:E1CC:08:E0:96:34:4D", "11");
-		pointsOfInterest.put("CC:08:E0:96:34:4D90:00:4E:FE:34:E1", "11"); 
-
-		pointsOfInterest.put("00:02:72:C6:A3:89", "12");
-		
-		pointsOfInterest.put("00:02:72:C6:A3:8900:02:72:3F:4E:8B", "13");
-		pointsOfInterest.put("00:02:72:3F:4E:8B00:02:72:C6:A3:89", "13");
-
-		pointsOfInterest.put("00:02:72:3F:4E:8B", "14");
-		
-		pointsOfInterest.put("00:02:72:3F:4E:8B00:02:72:C6:A3:C6", "15");
-		pointsOfInterest.put("00:02:72:C6:A3:C600:02:72:3F:4E:8B", "15");
-		
-		pointsOfInterest.put("00:02:72:C6:A3:C6", "16");
-		
-		pointsOfInterest.put("00:02:72:C6:A3:C600:02:72:C6:A3:A4", "17");
-		pointsOfInterest.put("00:02:72:C6:A3:A400:02:72:C6:A3:C6", "17");
-		
-		pointsOfInterest.put("00:02:72:C6:A3:A4", "18");
-
-
-
-
-		return 0;
-	}
-
 
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -181,15 +61,6 @@ public class FieldTester extends Activity {
 		setContentView(R.layout.field_test);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		pb = (ProgressBar) findViewById(R.id.progress_bar);
-
-		//For testing purposes, D laptop, D iphone, D old laptop beacon, B old laptop beacon, Beacon 4	
-		String[] DeviceOrder = {"90:00:4E:FE:34:E1","78:A3:E4:A8:7E:48","00:02:72:C6:A3:A4","00:02:72:C6:A3:89","00:02:72:3F:4E:8B"};
-		
-		//InitBluetoothLocationServices();
-		InitBluetoothLocationServices(DeviceOrder);
-		
-
-		
 	}
 
 	public void onClick_StartWrite(View view) throws IOException { 
@@ -226,19 +97,20 @@ public class FieldTester extends Activity {
 		btnUndo.setEnabled(false);
 	}
 
+	
 	public void onClick_RecordStep(View view) throws IOException {
 
 	
-		beaconsInRange.clear();
-		rssiVal.clear();
-		adapter.cancelDiscovery();
-
+		
 		pb.setVisibility(ProgressBar.VISIBLE);
 		LinearLayout buttonsLayout = (LinearLayout) findViewById(R.id.linear_layout2);
 		buttonsLayout.setVisibility(View.INVISIBLE);
 
-		ScanForDevices cl = new ScanForDevices();
-		cl.start();//Starts the location finding algorithm
+		//Start e
+		DiscoverLocation cl = new DiscoverLocation(this); 
+		cl.InitBluetoothLocationServices();
+		cl.registerLocationListener(this);
+		cl.scanForDevices();//Starts the location finding algorithm
 
 
 		if (isUndoEnabled == false) {
@@ -270,6 +142,26 @@ public class FieldTester extends Activity {
 		btnRecordStep.setText("Record Step #" + (n + 1));
 	}
 
+	@Override
+	public void newLocationHasBeenCalculated(String LocationCalculated) {
+		d("Newlocationhasbeencalculated in callback: " + LocationCalculated);
+		
+	}
+
+	//Debug log function
+			public static void d(String s){ 
+				Log.d("debug", s);
+			}
+	/*public static void scanForDevices(){
+		FieldTester f = new FieldTester();
+		f.scanForDevicestwo();
+		
+	}
+	private void scanForDevicestwo(){
+		DiscoverLocation ct = new DiscoverLocation(this);
+		ct.scanForDevices();//Starts the location finding algorithm
+	}
+	
 	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
@@ -512,11 +404,7 @@ public class FieldTester extends Activity {
 						public void run() {	
 							//Toast.makeText(FieldTester.this, "The closest beacon is: " + deviceName.get(tempClosestBeacon.toString()), Toast.LENGTH_LONG).show();
 
-							/*Button btnUndo = (Button) findViewById(R.id.StopAndSave);
-if(tempClosestBeacon != null && tempSecondClosestBeacon != null)
-btnUndo.setText("closest:" + deviceName.get(tempClosestBeacon.toString()) + "\nsecond:" + deviceName.get(tempSecondClosestBeacon.toString()));
-else 
-btnUndo.setText("didnt find two beacons");*/
+							
 
 
 
@@ -606,16 +494,6 @@ btnUndo.setText("didnt find two beacons");*/
 	
 	
 	
-	private class temp implements LocationListener{
-
-		@Override
-		public void newLocationHasBeenCalculated(String LocationCalculated) {
-			Log.d("debug", LocationCalculated);
-			
-		}
-		
-		
-	}
 	
-	
+	*/
 }
