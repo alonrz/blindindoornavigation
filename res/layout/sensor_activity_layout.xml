@@ -41,12 +41,12 @@
         android:paddingTop="10dp" >
 
         <Button
-            android:id="@+id/btnSaveToFile"
+            android:id="@+id/btnStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:onClick="onClick_Save"
-            android:text="Save Test" />
+            android:onClick="onClick_Start"
+            android:text="Start" />
 
         <Button
             android:id="@+id/btnCancel"
@@ -64,6 +64,15 @@
             android:onClick="onClick_RestartSensors"
             android:text="Restart" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btnSaveToFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:onClick="onClick_Save"
+        android:text="Save Test" />
+
 	<TextView
         android:id="@+id/txtSteps"
         android:layout_width="wrap_content"
