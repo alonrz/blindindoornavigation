@@ -16,7 +16,7 @@
         android:layout_margin="10dp"
         android:layout_weight="1"
         android:text="Front End Team"
-        android:onClick="onclick_frontend" />
+        android:onClick="onClick_Frontend" />
 
     <Button
         android:id="@+id/btnBackEnd"

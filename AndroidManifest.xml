@@ -26,6 +26,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.example.uipackage.UIActivity">
+        </activity>
+        <activity android:name="com.example.uipackage.RouteActivity">
+        </activity>
+        <activity android:name="com.example.uipackage.BrowseActivity">
+        </activity>
+        <activity android:name="com.example.uipackage.BrowseDescription">
+        </activity>
+        <activity android:name="com.example.uipackage.BrowseNumber">
+        </activity>
+        <activity android:name="com.example.uipackage.CurrentLocationActivity">
+        </activity>
+        <activity android:name="com.example.uipackage.FavoriteActivity">
+        </activity>
+        <activity android:name="com.example.uipackage.NearPOI">
+        </activity>
         <activity android:name="com.example.blindindoornavigation.FieldTester" >
         </activity>
         <activity android:name="com.example.blindindoornavigation.SensorActivity" >
