@@ -40,7 +40,7 @@ public class CurrentLocationActivity extends Activity implements SensorEventList
 	private int filter_tmp = 0;
 	private boolean mFailed;
 	DiscoverLocation cl = new DiscoverLocation(this);
-//	private MapHandler ninethFloor = (new FloorMap()).getMap();
+	private MapHandler ninethFloor;
 	private Route route;
 
 	StepsManager mStepsManager = StepsManager.getStepsManager();
@@ -55,12 +55,12 @@ public class CurrentLocationActivity extends Activity implements SensorEventList
 		mAccelerometer = mSensorManager
 				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		location = getIntent().getIntExtra("roomNumber", -1);
-		
+	//	ninethFloor = (new FloorMap()).getMap();
 		TextView ts = (TextView) findViewById(R.id.calcDistanceTaken_cl);
 		ts.setText(""+location);
-//		route = ninethFloor.getRoute("906", ""+location);
+	//	route = ninethFloor.getRoute("906", ""+location);
 		
-		//ts.setText(route.getDirections());
+	//	ts.setText(route.getDirections());
 		try {
 			mStepsManager.registerListener(this);
 		} catch (Exception e) {
