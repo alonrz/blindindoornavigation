@@ -248,8 +248,10 @@ public class CurrentLocationActivity extends Activity implements SensorEventList
             	currentVirtualSpot = mapOfVirtualSpots.get(LocationCalculated);
         		if (location != -1 && currentVirtualSpot != null){
         			route = ninethFloor.getRoute(currentVirtualSpot.getFirstPOI(), ""+location);	
-        			directionDescription = route.getDirections();
+        			route.setCurrentLoc(currentVirtualSpot);
+        			directionDescription = route.getDirectionNextTurn();
         			ts.setText(directionDescription);
+        			//ts.setText(currentVirtualSpot.getFirstPOI());
         		}
             }
         });
