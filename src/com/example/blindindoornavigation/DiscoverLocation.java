@@ -76,6 +76,12 @@ public class DiscoverLocation {
 		deviceName.put("00:02:72:C6:A3:A4", "D old laptop beacon");
 		deviceName.put("00:02:72:C6:A3:89", "B old laptop beacon");
 		deviceName.put("00:02:72:3F:4E:8B", "Beacon 4");*/
+		
+		////////////////////////////////////////////////
+		
+		
+		
+		
 
 		//////////////////////////////////////////////////////////////////////////////////////////////
 		//colOrder is used to make sure the write-to-database is always written in the correct order
@@ -101,18 +107,65 @@ public class DiscoverLocation {
 		}
 		
 		
-		pointsOfInterest.put("CC:08:E0:96:34:4D", "0");
-		pointsOfInterest.put("CC:08:E0:96:34:4DCC:08:E0:A8:02:27", "1"); // between b and d old iphone4
-		pointsOfInterest.put("CC:08:E0:A8:02:27CC:08:E0:96:34:4D", "1"); // between b and d old iphone4
 		
-		pointsOfInterest.put("CC:08:E0:A8:02:27", "2");
+		/*
+		deviceName.put("00:02:72:3F:40:5F", "1");
+		deviceName.put("00:02:72:3F:4E:8B", "2");
+		deviceName.put("00:02:72:C6:A3:A4", "3");
+		deviceName.put("00:02:72:C6:A3:89", "4");
+		deviceName.put("00:02:72:C6:A3:C6", "5");
+		*/
 		
 		
-		pointsOfInterest.put("00:02:72:C6:A3:A4", "At New Laptop");
-		pointsOfInterest.put("00:02:72:C6:A3:A490:00:4E:FE:34:E1", "between");
-		pointsOfInterest.put("90:00:4E:FE:34:E100:02:72:C6:A3:A4", "between");
 		
-		pointsOfInterest.put("90:00:4E:FE:34:E1", "at Old Laptop");
+		
+		
+		pointsOfInterest.put("00:02:72:3F:40:5F", "0");
+		pointsOfInterest.put("00:02:72:3F:40:5F00:02:72:3F:4E:8B", "1"); 
+		pointsOfInterest.put("00:02:72:3F:4E:8B00:02:72:3F:40:5F", "1");
+		
+		pointsOfInterest.put("00:02:72:3F:4E:8B", "2");
+		pointsOfInterest.put("00:02:72:3F:4E:8B00:02:72:C6:A3:A4", "3"); 
+		pointsOfInterest.put("00:02:72:C6:A3:A400:02:72:3F:4E:8B", "3");
+	
+		pointsOfInterest.put("00:02:72:C6:A3:A4", "4");
+		pointsOfInterest.put("00:02:72:C6:A3:A400:02:72:C6:A3:89", "5"); 
+		pointsOfInterest.put("00:02:72:C6:A3:8900:02:72:C6:A3:A4", "5");
+	
+		pointsOfInterest.put("00:02:72:C6:A3:89", "6");
+		pointsOfInterest.put("00:02:72:C6:A3:8900:02:72:C6:A3:C6", "7"); 
+		pointsOfInterest.put("00:02:72:C6:A3:C600:02:72:C6:A3:89", "7");
+	
+		pointsOfInterest.put("00:02:72:C6:A3:C6", "8");
+		/*USE THIS CHUNK FOR ALONS LAST TWO
+		pointsOfInterest.put("", "9"); 
+		pointsOfInterest.put("", "9");
+	
+		pointsOfInterest.put("", "10");
+		pointsOfInterest.put("", "11"); 
+		pointsOfInterest.put("", "11");
+		
+		pointsOfInterest.put("", "12");*/
+		///////////////////////////////////////
+		
+		/*pointsOfInterest.put("", "13"); 
+		pointsOfInterest.put("", "13");
+		
+		pointsOfInterest.put("", "14");
+		pointsOfInterest.put("", "15"); 
+		pointsOfInterest.put("", "15");
+		
+		pointsOfInterest.put("", "16");
+		pointsOfInterest.put("", "17"); 
+		pointsOfInterest.put("", "17");
+		
+		pointsOfInterest.put("", "18");
+		pointsOfInterest.put("", "19"); 
+		pointsOfInterest.put("", "19");
+	
+		pointsOfInterest.put("", "20");
+		pointsOfInterest.put("", "21"); 
+		pointsOfInterest.put("", "21");*/
 		
 		/////////////////////////////////////////////////////////////////////////
 		//TODO Currently only three beacons and their mid points are hard coded.
