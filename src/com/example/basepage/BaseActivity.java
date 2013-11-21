@@ -4,6 +4,7 @@ import com.example.blindindoornavigation.MainActivity;
 import com.example.blindindoornavigation.R;
 import com.example.blindindoornavigation.R.layout;
 import com.example.blindindoornavigation.R.menu;
+import com.example.uipackage.UIActivity;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -29,6 +30,11 @@ public class BaseActivity extends Activity {
 	public void onClick_Backend(View view)
 	{
 		Intent intent = new Intent(this, MainActivity.class);
+		this.startActivity(intent);
+	}
+	public void onClick_Frontend(View view)
+	{
+		Intent intent = new Intent(this, UIActivity.class);
 		this.startActivity(intent);
 	}
 

@@ -63,7 +63,7 @@ public class DiscoverLocation {
 		//d(pointsOfInterest.toString());
 	}
 	
-	int InitBluetoothLocationServices()
+	public int InitBluetoothLocationServices()
 	{
 		/*deviceName.put("90:00:4E:FE:34:E1", "David's Laptop");
 		deviceName.put("78:A3:E4:A8:7E:48", "David's iPhone"); 
@@ -177,7 +177,7 @@ public class DiscoverLocation {
 	
 	
 	
-	DiscoverLocation(Context c){
+	public DiscoverLocation(Context c){
 		activityContext = c;
 		
 		//TODO remove hardcoded mac addresses
@@ -287,6 +287,10 @@ public class DiscoverLocation {
 				newLocationHasBeenCalculated();
 				discover d = new discover();
 				d.start();  
+				//===============================================================================================
+				//end loop();
+				
+				//===============================================================================================
 			}
 
 

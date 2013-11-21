@@ -21,44 +21,62 @@ public final class R {
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int border=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
+        public static final int arrow=0x7f020000;
+        public static final int border=0x7f020001;
+        public static final int ic_launcher=0x7f020002;
     }
     public static final class id {
         public static final int RecordStep=0x7f090008;
         public static final int StartWrite=0x7f090005;
         public static final int StopAndSave=0x7f090006;
         public static final int Undo=0x7f090009;
-        public static final int action_settings=0x7f090017;
+        public static final int action_settings=0x7f090025;
+        public static final int arrowContainer=0x7f09001f;
+        public static final int azimuth=0x7f09001e;
         public static final int btnBackEnd=0x7f090001;
-        public static final int btnCancel=0x7f090011;
+        public static final int btnCancel=0x7f090012;
         public static final int btnFrontEnd=0x7f090000;
-        public static final int btnRestartSensors=0x7f090012;
-        public static final int btnSaveToFile=0x7f090013;
-        public static final int btnStart=0x7f090010;
-        public static final int btnStartCalibrate=0x7f090015;
+        public static final int btnRestartSensors=0x7f090013;
+        public static final int btnSaveToFile=0x7f090014;
+        public static final int btnStart=0x7f090011;
+        public static final int btnStartCalibrate=0x7f090016;
+        public static final int calcDistanceTaken=0x7f090019;
+        public static final int calcDistanceTaken_cl=0x7f090021;
+        public static final int calcStepsTaken=0x7f09001c;
         public static final int linearLayout1=0x7f090004;
         public static final int linear_layout2=0x7f090007;
         public static final int progress_bar=0x7f09000a;
-        public static final int txtAzimuth=0x7f09000b;
+        public static final int stepsCount=0x7f090020;
+        public static final int testbt=0x7f09000b;
+        public static final int textView1=0x7f09001b;
+        public static final int textView2=0x7f090018;
+        public static final int txtAzimuth=0x7f09000c;
         public static final int txtBTIndicator=0x7f090002;
         public static final int txtDeviceOne=0x7f090003;
-        public static final int txtDistance=0x7f090016;
-        public static final int txtSteps=0x7f090014;
-        public static final int txtVelocity=0x7f09000f;
-        public static final int txtX_axis=0x7f09000d;
-        public static final int txtY_axis=0x7f09000e;
-        public static final int txtZ_axis=0x7f09000c;
+        public static final int txtDistance=0x7f090017;
+        public static final int txtSteps=0x7f090015;
+        public static final int txtVelocity=0x7f090010;
+        public static final int txtX_axis=0x7f09000e;
+        public static final int txtY_axis=0x7f09000f;
+        public static final int txtZ_axis=0x7f09000d;
+        public static final int uiStartCalc=0x7f09001d;
+        public static final int uiStartCalc_cl=0x7f090023;
+        public static final int uiStopCalc=0x7f09001a;
+        public static final int uiStopCalc_cl=0x7f090022;
+        public static final int virtualSpot=0x7f090024;
     }
     public static final class layout {
         public static final int activity_base=0x7f030000;
         public static final int activity_main=0x7f030001;
         public static final int field_test=0x7f030002;
         public static final int sensor_activity_layout=0x7f030003;
+        public static final int ui_calibrate_layout=0x7f030004;
+        public static final int ui_main_layout=0x7f030005;
     }
     public static final class menu {
         public static final int base=0x7f080000;
         public static final int main=0x7f080001;
+        public static final int ui_main=0x7f080002;
     }
     public static final class raw {
         public static final int vspots=0x7f040000;
