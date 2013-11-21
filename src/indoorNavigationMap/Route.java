@@ -53,15 +53,23 @@ public class Route
 	public String getDirectionNextTurn()
 	{
 		int tempindex = currentIndex;		
+		String directions = "";
 		
 		nextTurn(currentIndex);
-
-		int currentDirection = route.get(currentIndex-1).directionTo(route.get(currentIndex));
-		int nextDirection = route.get(currentIndex).directionTo(route.get(currentIndex + 1));
-				
-		int turnto = (12 - (currentDirection - nextDirection))%12;
-				
-		String directions = "Turn to " + turnto + " o' clock.\n";
+		
+		if(currentIndex != route.size()-1)
+		{
+			int currentDirection = route.get(currentIndex-1).directionTo(route.get(currentIndex));
+			int nextDirection = route.get(currentIndex).directionTo(route.get(currentIndex + 1));
+			
+			int turnto = (12 - (currentDirection - nextDirection))%12;
+			
+			directions = directions + "Turn to " + turnto + " o' clock.\n";
+		}
+		else
+		{
+			directions = null;
+		}
 
 		currentIndex = tempindex;
 		return directions;
