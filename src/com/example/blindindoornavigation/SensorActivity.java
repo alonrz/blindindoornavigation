@@ -152,8 +152,8 @@ public class SensorActivity extends Activity implements SensorEventListener, Ste
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 
-				// Start calibration - reset fields
-				mStepsManager.reset();
+				// Start calibration
+				mStepsManager.startCalibration();
 			}
 		});
 		alertBuilder.setNegativeButton("Cancel", new OnClickListener() {

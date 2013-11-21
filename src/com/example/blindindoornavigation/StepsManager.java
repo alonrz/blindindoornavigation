@@ -46,7 +46,7 @@ public class StepsManager implements SensorEventListener {
 
 	private float offsetY, offsetX, offsetZ;
 	private boolean offset_set = false;
-	private boolean mFailed, isSensorRunning = true;
+	private boolean mFailed, isSensorRunning = false;
 
 	WriterUtility writer;
 
@@ -54,8 +54,8 @@ public class StepsManager implements SensorEventListener {
 	double lastVelocity, lastAccel;
 
 	// vars for calculating steps
-	double maxTotal = 0.5, minTotal = -0.5, maxLocal, minLocal,
-			deltaPositive = .5, deltaNegative = .5;
+	double maxTotal = 0.8, minTotal = -0.8, maxLocal, minLocal,
+			deltaPositive = 1, deltaNegative = -1;
 	int mSteps = 0;
 	boolean isPositive = true;
 
@@ -75,6 +75,8 @@ public class StepsManager implements SensorEventListener {
 	 *             If activity is not a subclass of Activity
 	 */
 	public void registerListener(StepsListener activity) throws Exception {
+		if(isSensorRunning == true)
+			return;
 		if (!(activity instanceof Activity))
 			throw new Exception(
 					"Not a subclass of Activity. Must be for use of SharedPreferences etc...");
@@ -94,6 +96,7 @@ public class StepsManager implements SensorEventListener {
 				.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
 		registerListeners();
+		isSensorRunning = true;
 	}
 
 	/**
@@ -104,6 +107,8 @@ public class StepsManager implements SensorEventListener {
 	 */
 	public void unregisterListener() {
 		mSensorManager.unregisterListener(this);
+		isSensorRunning =false;
+		reset();
 		mActivity = null;
 	}
 
@@ -174,18 +179,13 @@ public class StepsManager implements SensorEventListener {
 		long now = System.currentTimeMillis();
 		interval = Math.abs(lastEvent - now);
 		lastEvent = now;
-
-		lastVelocity = lastVelocity + lastAccel * (interval / 1000000.);
-		/*
-		 * V = V_0 + AT where A is the previous accel applied on the interval
-		 * passed To calculate the velocity traveled. V_0 is the initial
-		 * velocity at each time interval passed so we keep updating it.
-		 */
+		
 		// lastAccel = mLinearAccel[1] - offsetY; // Y- axis
 		lastAccel = mLinearAccel[1] - offsetY + mLinearAccel[0] - offsetX
 				+ mLinearAccel[2] - offsetZ; // ALL axis
 
-		Log.i("Accel", Double.toString(lastAccel));
+		if(lastAccel>0.5) 
+			Log.i("Accel", Double.toString(lastAccel));
 		writer.writeValue(Double.toString(lastAccel));
 		CalculateSteps(lastAccel);
 
@@ -246,6 +246,7 @@ public class StepsManager implements SensorEventListener {
 	 */
 	public void startCalibration() {
 		mSteps = 0;
+		mDistanceWalked = 0;
 	}
 
 	/**
