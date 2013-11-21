@@ -29,9 +29,48 @@ public class Route
 		
 		return route.get(start).distFrom(route.get(current));
 	}
-	
+
+	public VirtualSpot getNextTurn()
+	{
+		int tempindex = currentIndex;
+
+		nextTurn(currentIndex);
+
+		VirtualSpot next = route.get(currentIndex);
+		currentIndex = tempindex;
+
+		return next;
+	}
+
+	public String getDistNextTurn()
+	{
+		int tempindex = currentIndex;		
+		double distance = nextTurn(currentIndex);
+		currentIndex = tempindex;
+		return "Go " + distance + "steps.\n";
+	}
+
+	public String getDirectionNextTurn()
+	{
+		int tempindex = currentIndex;		
+		
+		nextTurn(currentIndex);
+
+		int currentDirection = route.get(currentIndex-1).directionTo(route.get(currentIndex));
+		int nextDirection = route.get(currentIndex).directionTo(route.get(currentIndex + 1));
+				
+		int turnto = (12 - (currentDirection - nextDirection))%12;
+				
+		String directions + "Turn to " + turnto + " o' clock.\n";
+
+		currentIndex = tempindex;
+		return directions;
+	}
+
 	public String getDirections()
 	{
+		int tempindex = currentIndex;
+
 		int direction = route.get(0).directionTo(route.get(1));
 		String directions = "Turn to " + direction + " o' clock.\n";
 		
@@ -48,6 +87,8 @@ public class Route
 				directions = directions + "Turn to " + turnto + " o' clock.\n";
 			}
 		}
+
+		currentIndex = tempindex;
 		
 		return directions;
 		
@@ -90,5 +131,6 @@ public class Route
 	public void setCurrentLoc(VirtualSpot currentLoc)
 	{
 		this.currentLoc = currentLoc;
+		currentIndex = route.indexOf(currentLoc);
 	}
 }
