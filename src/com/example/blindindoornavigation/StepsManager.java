@@ -55,7 +55,7 @@ public class StepsManager implements SensorEventListener {
 
 	// vars for calculating steps
 	double maxTotal = 0.8, minTotal = -0.8, maxLocal, minLocal,
-			deltaPositive = 1, deltaNegative = -1;
+			deltaPositive = .5, deltaNegative = -.5;
 	int mSteps = 0;
 	boolean isPositive = true;
 
@@ -201,21 +201,24 @@ public class StepsManager implements SensorEventListener {
 		// total max and min
 		if (maxTotal < lastAccel) {
 			maxTotal = lastAccel;
-			deltaPositive = maxTotal / 2;
+			deltaPositive = maxTotal / 3;
 		}
 		if (minTotal > lastAccel) {
 			minTotal = lastAccel;
-			deltaNegative = minTotal / 2;
+			deltaNegative = minTotal / 3;
 		}
 
 		// Check if transitioned from positive to negative or other way
 		if (isPositive == true) {
 			if (lastAccel < deltaNegative)
+			{
 				isPositive = false;
+				stepDetected(++mSteps);
+			}
 		} else {
 			if (lastAccel > deltaPositive) {
 				isPositive = true;
-				stepDetected(++mSteps);
+				
 			}
 		}
 	}
