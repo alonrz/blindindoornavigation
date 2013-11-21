@@ -109,6 +109,17 @@ public class VirtualSpot {
 	{
 		return vSpots;
 	}
+	/*
+	 * return poi=======================================================================================
+	 * I need to have method get POI list, from Thinh
+	 * the method below is just temporary 
+	*/
+	public String getFirstPOI()
+	{
+		return pois.valueAt(0).toString();
+	}
+	//==================================================================================================
+	
 	
 	public double distFrom(VirtualSpot vs)
 	{

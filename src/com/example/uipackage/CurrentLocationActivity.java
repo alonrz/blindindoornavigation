@@ -1,5 +1,7 @@
 package com.example.uipackage;
 
+import java.util.HashMap;
+
 import indoorNavigationMap.*;
 
 import com.example.blindindoornavigation.DiscoverLocation;
@@ -28,7 +30,10 @@ import android.widget.ImageView.ScaleType;
 
 public class CurrentLocationActivity extends Activity implements SensorEventListener, StepsListener, LocationListener {
 
-	private int location;
+	private HashMap<String, VirtualSpot> mapOfVirtualSpots;
+	private VirtualSpot currentVirtualSpot;
+	private int location; 
+	private String directionDescription;
 	private SensorManager mSensorManager;
 	private Sensor mOrientation, mAccelerometer;
 	private float[] mOrientation2 = new float[3];
@@ -40,7 +45,9 @@ public class CurrentLocationActivity extends Activity implements SensorEventList
 	private int filter_tmp = 0;
 	private boolean mFailed;
 	DiscoverLocation cl = new DiscoverLocation(this);
+	private FloorMap floorMap = new FloorMap();
 	private MapHandler ninethFloor;
+	
 	private Route route;
 
 	StepsManager mStepsManager = StepsManager.getStepsManager();
@@ -54,13 +61,15 @@ public class CurrentLocationActivity extends Activity implements SensorEventList
 				.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		mAccelerometer = mSensorManager
 				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		location = getIntent().getIntExtra("roomNumber", -1);
-	//	ninethFloor = (new FloorMap()).getMap();
+		
+		mapOfVirtualSpots = floorMap.getHashMapOfVirtualSpots();
+		location = getIntent().getIntExtra("roomNumber", -1);		
+		ninethFloor = floorMap.getMap();
 		TextView ts = (TextView) findViewById(R.id.calcDistanceTaken_cl);
 		ts.setText(""+location);
-	//	route = ninethFloor.getRoute("906", ""+location);
+
 		
-	//	ts.setText(route.getDirections());
+		//ts.setText(route.getDirections());
 		try {
 			mStepsManager.registerListener(this);
 		} catch (Exception e) {
@@ -225,11 +234,25 @@ public class CurrentLocationActivity extends Activity implements SensorEventList
 
 
 	@Override
-	public void newLocationHasBeenCalculated(String LocationCalculated) {
+	public void newLocationHasBeenCalculated(final String LocationCalculated) {
 		// TODO Auto-generated method stub
-		TextView currVS = (TextView) findViewById(R.id.virtualSpot);
+		//TextView currVS = (TextView) findViewById(R.id.virtualSpot);
+		final TextView ts = (TextView) findViewById(R.id.virtualSpot);
 		d("newLocation = " + LocationCalculated);
-		currVS.setText("LocationCalculated");
+		//currVS.setText("LocationCalculated");
+		runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+            	ts.setText(LocationCalculated);
+            	
+            	currentVirtualSpot = mapOfVirtualSpots.get(LocationCalculated);
+        		if (location != -1 && currentVirtualSpot != null){
+        			route = ninethFloor.getRoute(currentVirtualSpot.getFirstPOI(), ""+location);	
+        			directionDescription = route.getDirections();
+        			ts.setText(directionDescription);
+        		}
+            }
+        });
 		
 	}
 	

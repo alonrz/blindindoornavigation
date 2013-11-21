@@ -61,7 +61,7 @@ public class Route
 				
 		int turnto = (12 - (currentDirection - nextDirection))%12;
 				
-		String directions + "Turn to " + turnto + " o' clock.\n";
+		String directions = "Turn to " + turnto + " o' clock.\n";
 
 		currentIndex = tempindex;
 		return directions;
