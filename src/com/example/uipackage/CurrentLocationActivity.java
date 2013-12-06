@@ -286,17 +286,17 @@ SensorEventListener, StepsListener, LocationListener {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				vs.setText("You're near virtual spot #" + "4");
-				//vs.setText("You're near virtual spot #" + LocationCalculated);
-				currentVirtualSpot = mapOfVirtualSpots.get("4");
-				//currentVirtualSpot = mapOfVirtualSpots.get(LocationCalculated);
+				//vs.setText("You're near virtual spot #" + "4");
+				vs.setText("You're near virtual spot #" + LocationCalculated);
+				//currentVirtualSpot = mapOfVirtualSpots.get("4");
+				currentVirtualSpot = mapOfVirtualSpots.get(LocationCalculated);
 				if (location != -1 && currentVirtualSpot != null) {
 					if (prevVirtualSpot != currentVirtualSpot) {
 						prevVirtualSpot = currentVirtualSpot;
-						route = ninethFloor.getRouteVStoPoI("4",
+					//	route = ninethFloor.getRouteVStoPoI("4",
+					//			"" + location);
+						route = ninethFloor.getRouteVStoPoI(LocationCalculated,
 								"" + location);
-						//route = ninethFloor.getRouteVStoPoI(LocationCalculated,
-						//		"" + location);
 						route.setCurrentLoc(currentVirtualSpot);
 						stepsRemaining = route.stepsRemaining();
 						stepsUntilNextVS = route.getDistNextTurnInSteps();
