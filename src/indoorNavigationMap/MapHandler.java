@@ -141,16 +141,29 @@ public class MapHandler {
 		
 	}
 	
+	public Route getRouteVStoPoI(String start, String dest)
+	{
+		String destvs = poIs.get(dest).getVirtualSpot().getName();
+		return getRouteVStoVS(start, destvs);
+	}
+	
 	//A*
 	public Route getRoute(String start, String dest)
 	{
+		String startvs = poIs.get(start).getVirtualSpot().getName();
+		String destvs = poIs.get(dest).getVirtualSpot().getName();
+		return getRouteVStoVS(startvs, destvs);
+	}
+	
+	public Route getRouteVStoVS(String start, String dest)
+	{
 		PriorityQueue<VirtualSpot> tovisit;
 		
-		VirtualSpot vstart = poIs.get(start).getVirtualSpot();
-		VirtualSpot vdest = poIs.get(dest).getVirtualSpot();
+//		VirtualSpot vstart = poIs.get(start).getVirtualSpot();
+//		VirtualSpot vdest = poIs.get(dest).getVirtualSpot();
 		
-//		VirtualSpot vstart = vSpots.get(start);
-//		VirtualSpot vdest = vSpots.get(dest);
+		VirtualSpot vstart = vSpots.get(start);
+		VirtualSpot vdest = vSpots.get(dest);
 		
 		ToDestination todest = new ToDestination(vdest);
 		tovisit = new PriorityQueue<VirtualSpot>(20, todest);
