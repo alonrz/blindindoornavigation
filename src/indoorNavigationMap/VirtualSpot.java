@@ -99,6 +99,9 @@ public class VirtualSpot {
 		}
 	}
 	
+
+	
+	
 	//returns the virtual spot in that direction or null if there is none
 	public AdjacentVS getNextVirtualSpotByDirection(int direction)
 	{
@@ -116,8 +119,54 @@ public class VirtualSpot {
 	*/
 	public String getFirstPOI()
 	{
-		return pois.valueAt(0).toString();
+		return pois.valueAt(0).get(0).getName();
 	}
+	
+	//overload to add steps
+	public void setNextVirtualSpotByDirection(VirtualSpot vs, int dir, double steps)
+	{
+		//double dist = steps;
+		int oppositeDir = (dir + 6)%12;
+		
+		if(oppositeDir == 0)
+		{
+			oppositeDir = 12;
+		}
+		
+		if(vSpots.get(dir) == null || !vSpots.get(dir).vs.equals(vs))
+		{
+			vSpots.put(dir, new AdjacentVS(vs, steps));
+		}
+		else
+		{
+			AdjacentVS adjVS = vSpots.get(dir);
+			
+			if(steps < adjVS.dist)
+			{
+				vSpots.put(dir, new AdjacentVS(vs, steps));	
+			
+				vs.setNextVirtualSpotByDirection(this, oppositeDir);
+			
+				adjVS.vs.setNextVirtualSpotByDirection(vs, oppositeDir);
+			}
+			else
+			{
+				adjVS.vs.setNextVirtualSpotByDirection(vs, dir);
+			}
+		}
+	}
+	
+	public double stepsDistFrom(VirtualSpot vs){
+		double steps = 0.0;
+		for(int i = 0; i < vSpots.size(); i++) {
+			   if (vSpots.get((vSpots.keyAt(i))).getVS().equals(vs))
+				   steps= vSpots.get((vSpots.keyAt(i))).getDist();
+		}
+		return steps;
+	}
+
+	
+	
 	//==================================================================================================
 	
 	

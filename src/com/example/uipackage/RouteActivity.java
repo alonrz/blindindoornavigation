@@ -184,8 +184,8 @@ public class RouteActivity extends Activity implements SensorEventListener, Step
 			onFailure();
 		ImageView arrowView = (ImageView) findViewById(R.id.arrowContainer);
 		arrowView.setImageResource(R.drawable.arrow);
-		TextView azi = (TextView) findViewById(R.id.azimuth);
-		azi.setText("" + mAzimuth);
+	//	TextView azi = (TextView) findViewById(R.id.azimuth);
+	//	azi.setText("" + mAzimuth);
 		Matrix matrix = new Matrix();
 		arrowView.setScaleType(ScaleType.MATRIX);
 		matrix.postRotate(mAzimuth,

@@ -4,133 +4,184 @@ import java.util.*;
 
 public class Route
 {
-	private List<VirtualSpot> route;
-	private VirtualSpot currentLoc;
-	private int currentIndex = 0;
-	
-	public Route(List<VirtualSpot> route)
-	{
-		this.route = route;
-		currentLoc = route.get(0);
-	}
-	
-	private double nextTurn(int start)
-	{
-		int current = start + 1;
-		int direction = route.get(start).directionTo(route.get(current));
-		
-		while(current != route.size()-1 && route.get(current).directionTo(route.get(current+1)) == direction)
-		{
-			current++;
-		}
-		
-		currentLoc = route.get(current);
-		currentIndex = current;
-		
-		return route.get(start).distFrom(route.get(current));
-	}
+        private List<VirtualSpot> route;
+        private VirtualSpot currentLoc;
+        private int currentIndex = 0;
+        
+        public Route(List<VirtualSpot> route)
+        {
+                this.route = route;
+                currentLoc = route.get(0);
+        }
+        
+        private double nextTurn(int start)
+        {
+                int current = start + 1;
+                int direction = route.get(start).directionTo(route.get(current));
+                
+                while(current != route.size()-1 && route.get(current).directionTo(route.get(current+1)) == direction)
+                {
+                        current++;
+                }
+                
+                currentLoc = route.get(current);
+                currentIndex = current;
+                
+                return route.get(start).distFrom(route.get(current));
+        }
+        
+        /*
+         * 
+         * I need to add this so I can get steps as distance
+         * ==============================================
+         */
+        private double nextTurnInSteps(int start)
+        {
+                int current = start + 1;                
+                if (current != route.size()-1){
+                	currentLoc = route.get(current);
+                	currentIndex = current;
+                	return route.get(start).stepsDistFrom(route.get(current));
+                } else {
+                	return 0.0;
+                }
+        }
+        
+        public double getDistNextTurnInSteps()
+        {
+        		int tempindex = currentIndex;   
+                double distance = nextTurnInSteps(currentIndex);
+                currentIndex = tempindex;
+                return distance;
+        }
+        
+        public double stepsRemaining(){
+        		double totalDistance=0;
+        		for (int i = 0; i < route.size()-1; i++){
+        			totalDistance += route.get(i).stepsDistFrom(route.get(i+1));
+        		}
+        		return totalDistance;
+        }
+        
+        
+        
+        /*
+         * ===============================================
+         * 
+         * 
+         * 
+         */
+        
 
-	public VirtualSpot getNextTurn()
-	{
-		int tempindex = currentIndex;
+        public VirtualSpot getNextTurn()
+        {
+                int tempindex = currentIndex;
 
-		nextTurn(currentIndex);
+                nextTurn(currentIndex);
 
-		VirtualSpot next = route.get(currentIndex);
-		currentIndex = tempindex;
+                VirtualSpot next = route.get(currentIndex);
+                currentIndex = tempindex;
 
-		return next;
-	}
+                return next;
+        }
 
-	public String getDistNextTurn()
-	{
-		int tempindex = currentIndex;		
-		double distance = nextTurn(currentIndex);
-		currentIndex = tempindex;
-		return "Go " + distance + "steps.\n";
-	}
+        public String getDistNextTurn()
+        {
+                int tempindex = currentIndex;                
+                double distance = nextTurn(currentIndex);
+                currentIndex = tempindex;
+                return "Go " + distance + "steps.\n";
+        }
 
-	public String getDirectionNextTurn()
-	{
-		int tempindex = currentIndex;		
-		
-		nextTurn(currentIndex);
+        public String getDirectionNextTurn()
+        {
+                int tempindex = currentIndex;                
+                String directions = "";
+                
+                nextTurn(currentIndex);
+                
+                if(currentIndex != route.size()-1)
+                {
+                        int currentDirection = route.get(currentIndex-1).directionTo(route.get(currentIndex));
+                        int nextDirection = route.get(currentIndex).directionTo(route.get(currentIndex + 1));
+                        
+                        int turnto = (12 - (currentDirection - nextDirection))%12;
+                        
+                        directions = directions + "Turn to " + turnto + " o' clock.\n";
+                }
+                else
+                {
+                        directions = null;
+                }
 
-		int currentDirection = route.get(currentIndex-1).directionTo(route.get(currentIndex));
-		int nextDirection = route.get(currentIndex).directionTo(route.get(currentIndex + 1));
-				
-		int turnto = (12 - (currentDirection - nextDirection))%12;
-				
-		String directions = "Turn to " + turnto + " o' clock.\n";
+                currentIndex = tempindex;
+                return directions;
+        }
 
-		currentIndex = tempindex;
-		return directions;
-	}
+        public String getDirections()
+        {
+                int tempindex = currentIndex;
 
-	public String getDirections()
-	{
-		int tempindex = currentIndex;
+                int direction = route.get(0).directionTo(route.get(1));
+                String directions = "Turn to " + direction + " o' clock.\n";
+                
+                while(currentIndex != route.size()-1)
+                {
+                        directions = directions + "Go " + nextTurn(currentIndex) + " steps.\n";
+                        if(currentIndex != route.size()-1)
+                        {
+                                int currentDirection = route.get(currentIndex-1).directionTo(route.get(currentIndex));
+                                int nextDirection = route.get(currentIndex).directionTo(route.get(currentIndex + 1));
+                                
+                                int turnto = (12 - (currentDirection - nextDirection))%12;
+                                
+                                directions = directions + "Turn to " + turnto + " o' clock.\n";
+                        }
+                }
 
-		int direction = route.get(0).directionTo(route.get(1));
-		String directions = "Turn to " + direction + " o' clock.\n";
-		
-		while(currentIndex != route.size()-1)
-		{
-			directions = directions + "Go " + nextTurn(currentIndex) + " steps.\n";
-			if(currentIndex != route.size()-1)
-			{
-				int currentDirection = route.get(currentIndex-1).directionTo(route.get(currentIndex));
-				int nextDirection = route.get(currentIndex).directionTo(route.get(currentIndex + 1));
-				
-				int turnto = (12 - (currentDirection - nextDirection))%12;
-				
-				directions = directions + "Turn to " + turnto + " o' clock.\n";
-			}
-		}
+                currentIndex = tempindex;
+                
+                return directions;
+                
+                /*
+                String directions = "";
+                
+                int currentDirection = 12;
+                double currentDistance = 0.0;
+                
+                for(int i = 1; i < route.size() - 1; i++)
+                {
+                        if(route.get(i-1).directionTo(route.get(i)) != currentDirection)
+                        {
+                                currentDirection = route.get(i).directionTo(route.get(i+1));
+                                directions = directions + "Turn to " + currentDirection + " o' clock.\n";
+                        }
 
-		currentIndex = tempindex;
-		
-		return directions;
-		
-		/*
-		String directions = "";
-		
-		int currentDirection = 12;
-		double currentDistance = 0.0;
-		
-		for(int i = 1; i < route.size() - 1; i++)
-		{
-			if(route.get(i-1).directionTo(route.get(i)) != currentDirection)
-			{
-				currentDirection = route.get(i).directionTo(route.get(i+1));
-				directions = directions + "Turn to " + currentDirection + " o' clock.\n";
-			}
+                        {
+                                
+                        }
+                                currentDistance += route.get(i).getNextVirtualSpotByDirection(currentDirection).getDist();
+                        
+        //                else
+                        {
+                                currentDirection = route.get(i+1).directionTo(route.get(i+2));
+                                directions = directions + "Go " + currentDistance + " steps, then turn to ";
+                        }
+                }
+                
+                directions = directions + "Go " + currentDistance + " steps.";
+                
+                return directions;*/
+        }
 
-			{
-				
-			}
-				currentDistance += route.get(i).getNextVirtualSpotByDirection(currentDirection).getDist();
-			
-	//		else
-			{
-				currentDirection = route.get(i+1).directionTo(route.get(i+2));
-				directions = directions + "Go " + currentDistance + " steps, then turn to ";
-			}
-		}
-		
-		directions = directions + "Go " + currentDistance + " steps.";
-		
-		return directions;*/
-	}
-
-	public List<VirtualSpot> getVSList()
-	{
-		return route;
-	}
-	
-	public void setCurrentLoc(VirtualSpot currentLoc)
-	{
-		this.currentLoc = currentLoc;
-		currentIndex = route.indexOf(currentLoc);
-	}
+        public List<VirtualSpot> getVSList()
+        {
+                return route;
+        }
+        
+        public void setCurrentLoc(VirtualSpot currentLoc)
+        {
+                this.currentLoc = currentLoc;
+                currentIndex = route.indexOf(currentLoc);
+        }
 }

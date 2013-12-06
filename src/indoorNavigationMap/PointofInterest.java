@@ -18,6 +18,8 @@ public class PointofInterest {
 		vspot = vs;
 	}
 	
+	
+	
 	public String toString()
 	{
 		return name + ": " + description;

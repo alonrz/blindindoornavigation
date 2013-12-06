@@ -35,6 +35,7 @@ public class UIActivity extends ListActivity {
 	    	this.startActivity(intent);
 	    } else if (item.equals("Get Current Location")){
 	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
+	    	intent.putExtra("roomNumber", -1);
 	    	this.startActivity(intent);
 	    } else if (item.equals("Calibrate Steps")){
 	    	Intent intent = new Intent(this, CalibrateStep.class);

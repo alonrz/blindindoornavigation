@@ -10,7 +10,7 @@
     tools:context=".CurrentLocationActivity" >
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/directDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/calcDistanceTaken"
@@ -37,7 +37,7 @@
         android:text="Stop" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/remainDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/calcStepsTaken"
@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/textView2"
+        android:layout_alignRight="@+id/directDescription"
         android:layout_marginTop="68dp"
         android:textSize="30sp" />
 

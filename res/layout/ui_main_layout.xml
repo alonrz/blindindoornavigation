@@ -9,36 +9,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".CurrentLocationActivity" >
 
-    <TextView
-        android:id="@+id/azimuth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="32dp" />
-
     <ImageView
         android:id="@+id/arrowContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/azimuth"
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/virtualSpot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/arrowContainer"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="28dp"
-        android:text="You&apos;re near " />
-
-    <TextView
-        android:id="@+id/stepsCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_centerHorizontal="true"
-        android:textSize="30sp" />
+        android:text="@string/please_wait" />
 
     <TextView
         android:id="@+id/calcDistanceTaken_cl"
@@ -55,23 +39,37 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="74dp"
         android:onClick="onClickStart"
-        android:text="Test" />
+        android:text="Reset Step Count" />
+
+    <TextView
+        android:id="@+id/stepsCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/directDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/virtualSpot" />
 
     <Button
         android:id="@+id/uiStartCalc_cl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/calcDistanceTaken_cl"
+        android:layout_above="@+id/uiStopCalc_cl"
         android:layout_centerHorizontal="true"
-        android:onClick="onClickStartBT"
-        android:text="Test BT" />
+        android:onClick="onClickStartBT;"
+        android:text="Reroute" />
 
     <TextView
-        android:id="@+id/virtualSpot"
+        android:id="@+id/remainDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView1"
-        android:layout_marginLeft="16dp"
-        android:layout_toRightOf="@+id/uiStartCalc_cl" />
+        android:layout_above="@+id/calcDistanceTaken_cl"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

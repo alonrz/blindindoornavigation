@@ -30,9 +30,8 @@ public final class R {
         public static final int StartWrite=0x7f090005;
         public static final int StopAndSave=0x7f090006;
         public static final int Undo=0x7f090009;
-        public static final int action_settings=0x7f090025;
-        public static final int arrowContainer=0x7f09001f;
-        public static final int azimuth=0x7f09001e;
+        public static final int action_settings=0x7f090024;
+        public static final int arrowContainer=0x7f09001e;
         public static final int btnBackEnd=0x7f090001;
         public static final int btnCancel=0x7f090012;
         public static final int btnFrontEnd=0x7f090000;
@@ -41,15 +40,15 @@ public final class R {
         public static final int btnStart=0x7f090011;
         public static final int btnStartCalibrate=0x7f090016;
         public static final int calcDistanceTaken=0x7f090019;
-        public static final int calcDistanceTaken_cl=0x7f090021;
+        public static final int calcDistanceTaken_cl=0x7f090020;
         public static final int calcStepsTaken=0x7f09001c;
+        public static final int directDescription=0x7f090018;
         public static final int linearLayout1=0x7f090004;
         public static final int linear_layout2=0x7f090007;
         public static final int progress_bar=0x7f09000a;
-        public static final int stepsCount=0x7f090020;
+        public static final int remainDistance=0x7f09001b;
+        public static final int stepsCount=0x7f090022;
         public static final int testbt=0x7f09000b;
-        public static final int textView1=0x7f09001b;
-        public static final int textView2=0x7f090018;
         public static final int txtAzimuth=0x7f09000c;
         public static final int txtBTIndicator=0x7f090002;
         public static final int txtDeviceOne=0x7f090003;
@@ -62,8 +61,8 @@ public final class R {
         public static final int uiStartCalc=0x7f09001d;
         public static final int uiStartCalc_cl=0x7f090023;
         public static final int uiStopCalc=0x7f09001a;
-        public static final int uiStopCalc_cl=0x7f090022;
-        public static final int virtualSpot=0x7f090024;
+        public static final int uiStopCalc_cl=0x7f090021;
+        public static final int virtualSpot=0x7f09001f;
     }
     public static final class layout {
         public static final int activity_base=0x7f030000;
@@ -85,6 +84,7 @@ public final class R {
         public static final int action_settings=0x7f060001;
         public static final int app_name=0x7f060000;
         public static final int hello_world=0x7f060002;
+        public static final int please_wait=0x7f060004;
         public static final int title_activity_base=0x7f060003;
     }
     public static final class style {
