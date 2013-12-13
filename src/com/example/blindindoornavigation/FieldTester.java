@@ -74,8 +74,12 @@ public class FieldTester extends Activity implements LocationListener {
 
 		//Button btnStart = (Button) findViewById(R.id.StartWrite);
 		//btnStart.setEnabled(false);
-		Button btnStop = (Button) findViewById(R.id.StopAndSave);
-		btnStop.setEnabled(true);
+		
+		//Button btnStop = (Button) findViewById(R.id.StopAndSave);
+		//btnStop.setEnabled(true);
+		
+		final Button next = (Button) findViewById(R.id.StopAndSave);
+		next.setBackgroundResource(R.drawable.loc1);
 
 		Button btnRecordStep = (Button) findViewById(R.id.RecordStep);
 		btnRecordStep.setEnabled(true);

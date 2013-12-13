@@ -115,6 +115,12 @@ public class MainActivity extends Activity {
 		this.startActivity(myIntent);
 	}
 	
+	public void onClick_BackendDemo(View view)
+	{
+		Intent myIntent = new Intent(this, BackendDemo.class);
+		this.startActivity(myIntent);
+	}
+	
 	//Debug log function
 	public static void d(String s){
 		Log.d("debug", s);
