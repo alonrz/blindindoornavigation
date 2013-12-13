@@ -40,5 +40,11 @@
 	    android:layout_height="wrap_content"
 	    android:onClick="onClick_ToSensorLand"
 	    android:text="To SensorLand" />
+	
+	<Button
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:onClick="onClick_BackendDemo"
+	    android:text="Backend Demo" />
 
 </LinearLayout>
