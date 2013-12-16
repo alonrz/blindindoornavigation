@@ -47,15 +47,19 @@ public class StepsManager implements SensorEventListener {
 	private float offsetY, offsetX, offsetZ;
 	private boolean offset_set = false;
 	private boolean mFailed, isSensorRunning = false;
-
+	private int mSensorChangedCounter = 0;
 	WriterUtility writer;
 
 	long interval, lastEvent;
-	double lastVelocity, lastAccel;
+	double mCurrentVelocity, mCurrentAccel, mPreviousAccel=-1;
 
 	// vars for calculating steps
-	double maxTotal = 0.8, minTotal = -0.8, maxLocal, minLocal,
-			deltaPositive = .5, deltaNegative = -.5;
+	double maxTotal = 0.8, minTotal = -0.8, maxLocal, minLocal; //Keep track of local and total max/min
+	double deltaPositive = .5, deltaNegative = -.4; // Delta is the region that
+													// defines the noise, to be
+													// ignored. It is a portion
+													// (usually 1/3) of the max
+													// step height.
 	int mSteps = 0;
 	boolean isPositive = true;
 
@@ -75,7 +79,7 @@ public class StepsManager implements SensorEventListener {
 	 *             If activity is not a subclass of Activity
 	 */
 	public void registerListener(StepsListener activity) throws Exception {
-		if(isSensorRunning == true)
+		if (isSensorRunning == true)
 			return;
 		if (!(activity instanceof Activity))
 			throw new Exception(
@@ -107,7 +111,7 @@ public class StepsManager implements SensorEventListener {
 	 */
 	public void unregisterListener() {
 		mSensorManager.unregisterListener(this);
-		isSensorRunning =false;
+		isSensorRunning = false;
 		reset();
 		mActivity = null;
 	}
@@ -160,6 +164,7 @@ public class StepsManager implements SensorEventListener {
 		}
 		offset_set = true;
 
+		mSensorChangedCounter++;
 		/*
 		 * values[0]: Acceleration minus Gx on the x-axis values[1]:
 		 * Acceleration minus Gy on the y-axis values[2]: Acceleration minus Gz
@@ -179,45 +184,68 @@ public class StepsManager implements SensorEventListener {
 		long now = System.currentTimeMillis();
 		interval = Math.abs(lastEvent - now);
 		lastEvent = now;
-		
+
 		// lastAccel = mLinearAccel[1] - offsetY; // Y- axis
-		lastAccel = mLinearAccel[1] - offsetY + mLinearAccel[0] - offsetX
+		mCurrentAccel = mLinearAccel[1] - offsetY + mLinearAccel[0] - offsetX
 				+ mLinearAccel[2] - offsetZ; // ALL axis
 
-		if(lastAccel>0.5) 
-			Log.i("Accel", Double.toString(lastAccel));
-		writer.writeValue(Double.toString(lastAccel));
-		CalculateSteps(lastAccel);
+		if (mCurrentAccel > 0.5)
+			Log.i("Accel", Double.toString(mCurrentAccel));
+		writer.writeValue(Double.toString(mCurrentAccel));
+		CalculateSteps();
 
 	}
 
-	void CalculateSteps(double lastAccel) {
-		// if acceleration is in delta (buffer) it should be ignored.
-		if (lastAccel > 0 && lastAccel < deltaPositive)
+	void CalculateSteps() {
+		//implement sensorChange counter to get rid of "short" steps due to phone motions
+		// For now "short" steps will be less than 10 calls in positive/negative and then 
+		//switch, it will be ignored as it will be a "short" step == noise. 
+		Log.d("SENSOR COUNTER", "current accel = "+ mCurrentAccel + ", prev accel = "+ mPreviousAccel);
+		if(mPreviousAccel*mCurrentAccel < 0){
+			Log.d("SENSOR COUNTER", "sign change. zero counter");
+			mSensorChangedCounter = 0;
+		}
+		else
+		{
+			Log.d("SENSOR COUNTER", "Same Sign. counter = " + (mSensorChangedCounter+1) );
+			mSensorChangedCounter++;
+		}
+		
+		mPreviousAccel = mCurrentAccel; //save accel for next run.
+		Log.d("SENSOR COUNTER", "testing counter is less than 15 = " + mSensorChangedCounter );
+		if(mSensorChangedCounter<15)
 			return;
-		if (lastAccel < 0 && lastAccel > deltaNegative)
+		
+		
+		
+		// if acceleration is in delta (buffer) it should be ignored as it is noise.
+		if (mCurrentAccel > 0 && mCurrentAccel < deltaPositive)
+			return;
+		if (mCurrentAccel < 0 && mCurrentAccel > deltaNegative)
 			return;
 
 		// total max and min
-		if (maxTotal < lastAccel) {
-			maxTotal = lastAccel;
+		if (maxTotal < mCurrentAccel) {
+			maxTotal = mCurrentAccel;
 			deltaPositive = maxTotal / 3;
 		}
-		if (minTotal > lastAccel) {
-			minTotal = lastAccel;
+		if (minTotal > mCurrentAccel) {
+			minTotal = mCurrentAccel;
 			deltaNegative = minTotal / 3;
 		}
 
 		// Check if transitioned from positive to negative or other way
 		if (isPositive == true) {
-			if (lastAccel < deltaNegative)
+			if (mCurrentAccel < deltaNegative)
 			{
 				isPositive = false;
 				stepDetected(++mSteps);
+				
 			}
 		} else {
-			if (lastAccel > deltaPositive) {
+			if (mCurrentAccel > deltaPositive) {
 				isPositive = true;
+				
 				
 			}
 		}
