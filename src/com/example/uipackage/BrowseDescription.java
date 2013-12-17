@@ -34,6 +34,11 @@ public class BrowseDescription extends ListActivity {
 	    	intent.putExtra("roomNumber", 935);
 	    	this.startActivity(intent);
 	    }
+	    else if (item.equals("Room 916")){
+	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
+	    	intent.putExtra("roomNumber", 934);
+	    	this.startActivity(intent);
+	    }
 	    else if (item.equals("Room 934")){
 	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
 	    	intent.putExtra("roomNumber", 934);
@@ -49,9 +54,24 @@ public class BrowseDescription extends ListActivity {
 	    	intent.putExtra("roomNumber", 907);
 	    	this.startActivity(intent);
 	    }
+	    else if (item.equals("Room 908")){
+	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
+	    	intent.putExtra("roomNumber", 908);
+	    	this.startActivity(intent);
+	    }
+	    else if (item.equals("Room 909")){
+	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
+	    	intent.putExtra("roomNumber", 909);
+	    	this.startActivity(intent);
+	    }
 	    else if (item.equals("Room 911")){
 	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
 	    	intent.putExtra("roomNumber", 911);
+	    	this.startActivity(intent);
+	    }
+	    else if (item.equals("Room 912")){
+	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
+	    	intent.putExtra("roomNumber", 912);
 	    	this.startActivity(intent);
 	    }
 	    else if (item.equals("Room 913")){
@@ -59,11 +79,6 @@ public class BrowseDescription extends ListActivity {
 	    	intent.putExtra("roomNumber", 913);
 	    	this.startActivity(intent);
 	    }
-	    else if (item.equals("Room 914")){
-	    	Intent intent = new Intent(this, CurrentLocationActivity.class);
-	    	intent.putExtra("roomNumber", 914);
-	    	this.startActivity(intent);
-	    }	    
 	  }
 	
 	@Override

@@ -76,6 +76,8 @@ SensorEventListener, StepsListener, LocationListener {
 		TextView ts = (TextView) findViewById(R.id.calcDistanceTaken_cl);
 		if (location != -1)
 			ts.setText("Destination: " + location);
+		
+		
 		isDestinationReach = false;
 		requiredNumOfSteps = 10;
 		forwardSteps = 0;
@@ -230,6 +232,11 @@ SensorEventListener, StepsListener, LocationListener {
 			ts.setText("Go for " + stepsUntilNextVSdeducted
 					+ " steps to reach next VS. \n" + stepsRemainingDeducted
 					+ " steps remaining to reach destination.");
+		} else {
+			dd.setText("");
+			ts.setText("");
+			if (isDestinationReach)
+				ts.setText("We've reached our destination");
 		}
 		// displayDirection(direction);
 	}
@@ -286,22 +293,28 @@ SensorEventListener, StepsListener, LocationListener {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				//vs.setText("You're near virtual spot #" + "4");
 				vs.setText("You're near virtual spot #" + LocationCalculated);
-				//currentVirtualSpot = mapOfVirtualSpots.get("4");
-				currentVirtualSpot = mapOfVirtualSpots.get(LocationCalculated);
-				if (location != -1 && currentVirtualSpot != null) {
+				//vs.setText("You're near virtual spot #" + LocationCalculated);
+				if (LocationCalculated != "-1")
+					currentVirtualSpot = mapOfVirtualSpots.get(LocationCalculated);
+				//currentVirtualSpot = mapOfVirtualSpots.get(LocationCalculated);
+				if (LocationCalculated != "-1" && currentVirtualSpot != null) {
 					if (prevVirtualSpot != currentVirtualSpot) {
 						prevVirtualSpot = currentVirtualSpot;
-					//	route = ninethFloor.getRouteVStoPoI("4",
-					//			"" + location);
 						route = ninethFloor.getRouteVStoPoI(LocationCalculated,
 								"" + location);
+						//route = ninethFloor.getRouteVStoPoI(LocationCalculated,
+						//		"" + location);
+						if (route != null){
 						route.setCurrentLoc(currentVirtualSpot);
 						stepsRemaining = route.stepsRemaining();
 						stepsUntilNextVS = route.getDistNextTurnInSteps();
 						routeSet = true;
 						stepped = 0;
+						} else {	
+							routeSet = false;
+							//you've reached destination.
+						}
 						mStepsManager.reset();
 					}
 					// ts.setText(""+direction);

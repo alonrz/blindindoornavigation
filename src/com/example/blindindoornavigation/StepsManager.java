@@ -201,11 +201,11 @@ public class StepsManager implements SensorEventListener {
 		// total max and min
 		if (maxTotal < lastAccel) {
 			maxTotal = lastAccel;
-			deltaPositive = maxTotal / 2;
+			deltaPositive = maxTotal / 4;
 		}
 		if (minTotal > lastAccel) {
 			minTotal = lastAccel;
-			deltaNegative = minTotal / 2;
+			deltaNegative = minTotal / 4;
 		}
 
 		// Check if transitioned from positive to negative or other way

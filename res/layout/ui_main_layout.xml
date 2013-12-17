@@ -56,15 +56,6 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/virtualSpot" />
 
-    <Button
-        android:id="@+id/uiStartCalc_cl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/uiStopCalc_cl"
-        android:layout_centerHorizontal="true"
-        android:onClick="onClickStartBT;"
-        android:text="Reroute" />
-
     <TextView
         android:id="@+id/remainDistance"
         android:layout_width="wrap_content"

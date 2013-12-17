@@ -23,14 +23,15 @@ public final class R {
     public static final class drawable {
         public static final int arrow=0x7f020000;
         public static final int border=0x7f020001;
-        public static final int ic_launcher=0x7f020002;
+        public static final int floor9map=0x7f020002;
+        public static final int ic_launcher=0x7f020003;
     }
     public static final class id {
         public static final int RecordStep=0x7f090008;
         public static final int StartWrite=0x7f090005;
         public static final int StopAndSave=0x7f090006;
         public static final int Undo=0x7f090009;
-        public static final int action_settings=0x7f090024;
+        public static final int action_settings=0x7f090023;
         public static final int arrowContainer=0x7f09001e;
         public static final int btnBackEnd=0x7f090001;
         public static final int btnCancel=0x7f090012;
@@ -59,7 +60,6 @@ public final class R {
         public static final int txtY_axis=0x7f09000f;
         public static final int txtZ_axis=0x7f09000d;
         public static final int uiStartCalc=0x7f09001d;
-        public static final int uiStartCalc_cl=0x7f090023;
         public static final int uiStopCalc=0x7f09001a;
         public static final int uiStopCalc_cl=0x7f090021;
         public static final int virtualSpot=0x7f09001f;
