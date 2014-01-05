@@ -17,22 +17,42 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-
-
 public class DiscoverLocation {
 
-	Hashtable<String, Short> rssiVal = new Hashtable<String, Short>();
-	Hashtable<Integer, String> colOrder= new Hashtable<Integer, String>(); //used for pilot test to keep certain beacons in column order
-	Hashtable<String, String> pointsOfInterest = new Hashtable<String, String>(); //This will most likely be pulled from a database, but currently its just hard coded
-	List<String> lsSorted = new ArrayList<String>();
-	List<String> temp = new ArrayList<String>();
-	boolean firstTimeBoolean = true;
-	String CalculatedLocation = "-1";
-	Context activityContext;
-	BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-	Set<BluetoothDevice> beaconsInRange = new HashSet<BluetoothDevice>();
-	LocationListener mListener = null;
+	/**Singleton Class */
+	private static DiscoverLocation mDiscLoc = null;
+	private DiscoverLocation() {
+		
+	}
 
+	/**
+	 * Getter for Singleton class DiscoverLocation
+	 * 
+	 * @return a singleton instance of DiscoverLocation
+	 */
+	public static DiscoverLocation getStepsManager() {
+		if (mDiscLoc == null)
+			mDiscLoc = new DiscoverLocation();
+		
+		return mDiscLoc;
+	}
+	
+	
+	Hashtable<String, Short> rssiVal = new Hashtable<String, Short>();
+	Hashtable<Integer, String> colOrder= new Hashtable<Integer, String>(); //used for pilot test to keep certain beacon data in column order
+	Hashtable<String, String> pointsOfInterest = new Hashtable<String, String>(); //This will most likely be passed to DiscoverLocation, but currently its just hard coded
+	Set<BluetoothDevice> beaconsInRange = new HashSet<BluetoothDevice>();
+	
+	boolean isScanning = false;
+	boolean firstTimeBoolean = true;
+	
+	Context activityContext;
+	LocationListener mListener = null;
+	ScanForDevices ct = new ScanForDevices();
+	BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+	String CalculatedLocation = "-1";
+	
+	
 	/**
 	 * expects a array of physical hardware MAC addresses in the order they are set up in a building.  
 	 * I.e. if beacon 1 is next to beacon 2 which is next to beacon 3, the list has to have MAC of beacon 
@@ -56,61 +76,27 @@ public class DiscoverLocation {
 		}
 	}
 
+	/** default constructor currently is hard-coded for test beacons
+	 * 
+	 * @return
+	 */
 	public int InitBluetoothLocationServices()
-	{
-	
-		//////////////////////////////////////////////////////////////////////////////////////////////
-		//colOrder is used to make sure the write-to-database is always written in the correct order
-		//so rows/col stay static
-		//////////////////////////////////////////////////////////////////////////////////////////////
-
-		colOrder.put(0, "90:00:4E:FE:34:E1");
-		colOrder.put(1, "78:A3:E4:A8:7E:48");
-		colOrder.put(2, "20:C9:D0:85:58:5A");
-		colOrder.put(3, "D0:23:DB:24:81:46");
-		colOrder.put(4, "38:0A:94:A8:F8:76");  
-		colOrder.put(5, "CC:08:E0:A8:02:27");
-		colOrder.put(6, "CC:08:E0:96:34:4D");
-		colOrder.put(7, "00:02:72:C6:A3:C6");
-		colOrder.put(8, "00:02:72:C6:A3:A4");
-		colOrder.put(9, "00:02:72:C6:A3:89");
-		colOrder.put(10, "00:02:72:3F:4E:8B"); 
-
-		for(int i=0;i<colOrder.size(); i++){
-			temp.add("syncPulse");
-		}
-
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//create points of interest based off of beacons in system (default constructor is just using hardcoded beacon ids)
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		pointsOfInterest.put("00:02:72:3F:40:5F", "0");
-		pointsOfInterest.put("00:02:72:3F:40:5F00:02:72:3F:4E:8B", "1"); 
-		pointsOfInterest.put("00:02:72:3F:4E:8B00:02:72:3F:40:5F", "1");
-
-		pointsOfInterest.put("00:02:72:3F:4E:8B", "2");
-		pointsOfInterest.put("00:02:72:3F:4E:8B00:02:72:C6:A3:A4", "3"); 
-		pointsOfInterest.put("00:02:72:C6:A3:A400:02:72:3F:4E:8B", "3");
-
-		pointsOfInterest.put("00:02:72:C6:A3:A4", "4");
-		pointsOfInterest.put("00:02:72:C6:A3:A400:02:72:C6:A3:89", "5"); 
-		pointsOfInterest.put("00:02:72:C6:A3:8900:02:72:C6:A3:A4", "5");
-
-		pointsOfInterest.put("00:02:72:C6:A3:89", "6");
-		pointsOfInterest.put("00:02:72:C6:A3:8900:02:72:C6:A3:C6", "7"); 
-		pointsOfInterest.put("00:02:72:C6:A3:C600:02:72:C6:A3:89", "7");
-
-		pointsOfInterest.put("00:02:72:C6:A3:C6", "8");
-		/*USE THIS CHUNK FOR ALONS LAST TWO
-		pointsOfInterest.put("", "9"); 
-		pointsOfInterest.put("", "9");
-
-		pointsOfInterest.put("", "10");
-		pointsOfInterest.put("", "11"); 
-		pointsOfInterest.put("", "11");
-
-		pointsOfInterest.put("", "12");*/
-		///////////////////////////////////////
-
+	{		
+		String[] hardcodedBeacons = new String[5];
+		
+		hardcodedBeacons[0] = "00:02:72:3F:40:5F";
+		hardcodedBeacons[1] = "00:02:72:3F:4E:8B";
+		hardcodedBeacons[2] = "00:02:72:C6:A3:A4";
+		hardcodedBeacons[3] = "00:02:72:C6:A3:89";
+		hardcodedBeacons[4] = "00:02:72:C6:A3:C6";
+		
+		
+		//DEBUG, REMOVE BEFORE RUNNING TESTS
+		hardcodedBeacons[0] = "90:00:4E:FE:34:E1"; // D laptop
+		hardcodedBeacons[1] = "78:A3:E4:A8:7E:48"; // D iphone
+		
+		InitBluetoothLocationServices(hardcodedBeacons);
+		
 		return 0;
 	}
 
@@ -118,8 +104,7 @@ public class DiscoverLocation {
 		activityContext = c;
 
 		//NOTE: for prototyping we are currently just using default constructor and hard-coded beacons. 
-		//"void InitBluetoothLocationServices(String[] ListOfBluetoothBeacons)" is more 'ideal' way
-
+		//using the InitBluetoothLocationServices(String[] ListOfBluetoothBeacons) function is more ideal.
 		InitBluetoothLocationServices();
 	}
 
@@ -128,44 +113,153 @@ public class DiscoverLocation {
 		Log.d("debug", s);
 	}
 
+	/** This function is the entry point to the blue-tooth beacon scanning loop. 
+	 *  Once called beacons will be scanned for periodically
+	 * 
+	 */
 	public void scanForDevices(){
+		
+		//Ensure only one scan loop is ever started.
+		if(isScanning == false){
+			isScanning = true;
+			
+			beaconsInRange.clear();
+			rssiVal.clear();
+			adapter.cancelDiscovery();
 
-		beaconsInRange.clear();
-		rssiVal.clear();
-		adapter.cancelDiscovery();
-
-		ScanForDevices ct = new ScanForDevices();
-		ct.start();//Starts the location finding algorithm
+			ct.start();//Starts the location finding algorithm
+		}
+		
+	}
+	
+	/** stops the discovery cycle.
+	 * 
+	 */
+	public void stopDiscovery(){
+		ct.stopDiscovery();
+	}
+	
+	/** unregisters the Location Listener.
+	 * 
+	 */
+	public void unregisterLocationListener(){
+		ct.unregisterReciever();
 	}
 
+	/** registers a Location Listener callback
+	 * 
+	 * @param listener
+	 */
 	public void registerLocationListener(LocationListener listener)
 	{
 		mListener = listener;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////Discover Location Thread (used as loop)///////////////////////////
+	////////////////////////Calculate Location Thread/////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////
-	private class discover extends Thread {
+	/** sets up and begins the scan cycle for bluetooth beacons in range.
+	 * 
+	 */
+	private class ScanForDevices extends Thread   {
 
-		public discover() {
+		boolean isRegistered = false;
+		discover discoveryLoop = new discover();
+
+		public ScanForDevices() {
 
 		}
+
+		/** A broadcast receiver for bluetooth beacon callbacks.
+		 * 
+		 */
+		final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+			@SuppressLint("NewApi")
+			public void onReceive(Context context, Intent intent) {
+				String action = intent.getAction(); 
+
+				if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+					BluetoothDevice bd = (BluetoothDevice) intent.getExtras().get("android.bluetooth.device.extra.DEVICE");
+
+					//Filter for only expected bluetooth devices
+					if(pointsOfInterest.containsKey(bd.getAddress())){
+						rssiVal.put(bd.toString(), intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE));
+						beaconsInRange.add(bd);
+					}
+				}
+
+				if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action))
+				{
+					d("discovery started");
+				}
+				if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
+				{
+					d("discovery finished");
+				}
+			}
+		};
 
 		@SuppressLint("NewApi")
 		public void run() {
 
-			//////////////////////////////////////////////////////////////////
+			// Register the BroadcastReceiver
+			IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+			IntentFilter filter3 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+			IntentFilter filter4 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+
+			activityContext.registerReceiver(mReceiver, filter2);
+			activityContext.registerReceiver(mReceiver, filter3);
+			activityContext.registerReceiver(mReceiver, filter4);
+			isRegistered = true;
+			
+			////////////////////////////////////////////////////////////////////////////////
+			//start an inquiry scan loop
+			////////////////////////////////////////////////////////////////////////////////
+			d("::::::Starting::::::");
+			discoveryLoop.start();
+			
+
+		}
+		
+		/** stops the discovery cycle
+		 * 
+		 */
+		public void stopDiscovery(){
+			discoveryLoop.stopDiscovery();
+		}
+		
+		/** unregisters the receiver
+		 * 
+		 */
+		public void unregisterReciever(){
+			if(isRegistered == true)
+				activityContext.unregisterReceiver(mReceiver);
+		}
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////Discover Location Thread (used as loop)///////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////
+	private class discover extends Thread {
+		boolean keepGoing = true;
+		
+		public discover() {
+
+		}
+		
+		public void stopDiscovery(){
+			keepGoing = false;
+		}
+		
+		@SuppressLint("NewApi")
+		public void run() {
+
 			//Clear data storage from discovered devices from previous loop
-			//////////////////////////////////////////////////////////////////
 			beaconsInRange.clear();
 			rssiVal.clear();
-			lsSorted.clear(); 
 
-			/////////////////////////////////////////////////////////////////////////////////////////////////////
 			//Sleep for 5 seconds to allow bluetooth device discovery.
-			//Note, this is arbitrary and may need to be modified depending on the UI algorithm.
-			/////////////////////////////////////////////////////////////////////////////////////////////////////
+			//Note, this 5sec is arbitrary and may need to be modified depending on the UI algorithm.
 			adapter.startDiscovery();
 			try {
 				sleep(5000); 
@@ -180,11 +274,16 @@ public class DiscoverLocation {
 			//trigger callback
 			newLocationHasBeenCalculated();
 
-			//Restart the discovery loop
-			discover d = new discover();
-			d.start();
+			//Restart the discovery loop if applicable
+			if(keepGoing == true){
+				discover d = new discover();
+				d.start();
+			}
 		}
 
+		/** callback function to pass location calculated back to listeners
+		 * 
+		 */
 		void newLocationHasBeenCalculated()
 		{
 			if(mListener != null)
@@ -193,6 +292,10 @@ public class DiscoverLocation {
 				d("Error! mlisteners is null!");
 		}
 
+		/** locate the closest two beacons and determine physical location based off their RSSI values.
+		 * if only one beacon is present, the system automatically assumes it is the closest beacon. 
+		 * 
+		 */
 		private void locatePosition(){
 			//////////////////////////////////////////////////////////
 			//Find the closest beacon
@@ -260,6 +363,9 @@ public class DiscoverLocation {
 				}
 				else if ((rssiOne - rssiTwo) > -(BEACON_LOCATION_SENSITIVITY) && (rssiOne - rssiTwo) < BEACON_LOCATION_SENSITIVITY)
 				{
+					////////////////////////////////////////////////////////////////////////////////////
+					//equally close to both beacons, so pull the correct data for the midpoint
+					////////////////////////////////////////////////////////////////////////////////////
 					if(tempClosestBeacon != null && tempSecondClosestBeacon != null)
 					{
 						CalculatedLocation = pointsOfInterest.get(tempClosestBeacon.toString() + tempSecondClosestBeacon.toString());
@@ -269,65 +375,14 @@ public class DiscoverLocation {
 					}
 				}
 			}
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////Calculate Location Thread///////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////
-	private class ScanForDevices extends Thread   {
-
-		public ScanForDevices() {
-
-		}
-
-		//Create a BroadcastReceiver for ACL connection success
-		final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-			@SuppressLint("NewApi")
-			public void onReceive(Context context, Intent intent) {
-				String action = intent.getAction(); 
-
-				if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-					BluetoothDevice bd = (BluetoothDevice) intent.getExtras().get("android.bluetooth.device.extra.DEVICE");
-
-					//Filter for only expected bluetooth devices
-					if(pointsOfInterest.containsKey(bd.getAddress())){
-						rssiVal.put(bd.toString(), intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE));
-						beaconsInRange.add(bd);
-					}
-				}
-
-				if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action))
-				{
-					d("discovery started");
-				}
-				if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
-				{
-					d("discovery finished");
-				}
+			else if(tempClosestBeacon != null)
+			{
+				////////////////////////////////////////////////////////////////////////////////////
+				//If only one beacon is seen, it is by default the closest.
+				////////////////////////////////////////////////////////////////////////////////////
+				CalculatedLocation = pointsOfInterest.get(tempClosestBeacon.toString());
 			}
-		};
-
-
-		@SuppressLint("NewApi")
-		public void run() {
-
-			// Register the BroadcastReceiver
-			IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-			IntentFilter filter3 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-			IntentFilter filter4 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-
-			// TODO Don't forget to unregister during onDestroy  (currently never unregisters)
-			activityContext.registerReceiver(mReceiver, filter2);
-			activityContext.registerReceiver(mReceiver, filter3);
-			activityContext.registerReceiver(mReceiver, filter4);
-
-			////////////////////////////////////////////////////////////////////////////////
-			//start an inquiry scan loop
-			////////////////////////////////////////////////////////////////////////////////
-			d("::::::Starting::::::");
-			discover d = new discover();
-			d.start();
+			
 		}
 	}	
 }
